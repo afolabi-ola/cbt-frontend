@@ -5,14 +5,13 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { useState } from 'react';
 import Link from 'next/link';
-import SpinnerMini from '@/components/SpinnerMini';
 
 interface LoginFormData {
-  id: string;
+  email: string;
   password: string;
 }
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const {
     register,
@@ -40,7 +39,7 @@ export default function LoginPage() {
       <div className='hidden lg:flex lg:w-1/2 relative'>
         <Image
           src='/images/studentloginimage.png'
-          alt='Student Login'
+          alt='Admin Login'
           fill
           className='object-cover'
           priority
@@ -51,10 +50,10 @@ export default function LoginPage() {
       <div className='flex-1 flex flex-col justify-center px-6 py-12 lg:px-8 bg-background'>
         <div className='sm:mx-auto sm:w-full sm:max-w-md'>
           <h2 className='mt-6 text-center text-3xl font-bold tracking-tight text-foreground'>
-            Student Login
+            Admin/Teacher Login
           </h2>
           <p className='mt-2 text-center text-sm text-neutral-600'>
-            Welcome back! Please enter your details to continue.
+            Sign in to manage exams and students
           </p>
         </div>
 
@@ -65,29 +64,28 @@ export default function LoginPage() {
                 htmlFor='email'
                 className='block text-sm font-medium text-foreground'
               >
-                Student ID
+                Email address
               </label>
               <div className='mt-1'>
                 <input
-                  id='id'
-                  type='text'
-                  autoComplete='off'
-                  placeholder='1a209s97s655'
+                  id='email'
+                  type='email'
+                  autoComplete='email'
                   required
                   className='block w-full rounded-md border border-neutral-300 px-3 py-2 shadow-sm 
                            focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500
                            bg-background text-foreground'
-                  {...register('id', {
-                    required: 'ID is required',
-                    // pattern: {
-                    //   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    //   message: 'Invalid email address',
-                    // },
+                  {...register('email', {
+                    required: 'Email is required',
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: 'Invalid email address',
+                    },
                   })}
                 />
-                {errors.id && (
+                {errors.email && (
                   <p className='mt-1 text-sm text-error-500'>
-                    {errors.id.message}
+                    {errors.email.message}
                   </p>
                 )}
               </div>
@@ -158,28 +156,22 @@ export default function LoginPage() {
                 disabled={isLoading}
                 className='flex w-full justify-center rounded-md bg-primary-600 px-3 py-2
                          text-sm font-semibold text-white shadow-sm hover:bg-primary-500
-                         focus-visible:outline-offset-2 focus-visible:outline-primary-600
-                         disabled:opacity-50 disabled:cursor-not-allowed'
+                         focus-visible:outline-2 focus-visible:outline-offset-2 
+                         focus-visible:outline-primary-600 disabled:opacity-50 
+                         disabled:cursor-not-allowed'
               >
-                {isLoading ? (
-                  <>
-                    <span className=' mr-2'>Signing in</span>
-                    <SpinnerMini />
-                  </>
-                ) : (
-                  'Sign in'
-                )}
+                {isLoading ? 'Signing in...' : 'Sign in'}
               </button>
             </div>
           </form>
 
           <p className='mt-8 text-center text-sm text-neutral-600'>
-            Not a student?{' '}
+            Are you a student?{' '}
             <Link
-              href='/admin/login'
+              href='/'
               className='font-medium text-primary-600 hover:text-primary-500'
             >
-              Login as admin/teacher
+              Login here
             </Link>
           </p>
         </div>
