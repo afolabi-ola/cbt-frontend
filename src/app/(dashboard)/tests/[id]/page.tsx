@@ -1,10 +1,12 @@
+'use client';
+import { useTest } from '@/context/TestContext';
 // app/(student)/tests/[id]/page.tsx
 import { redirect } from 'next/navigation';
 
-interface Params {
-  params: { id: string };
-}
+export default function Page() {
+  const { selectedTest } = useTest();
 
-export default function Page({ params }: Params) {
-  redirect(`/tests/${params.id}/summary`);
+  if (!selectedTest) redirect(`/tests`);
+
+  redirect(`/tests/${selectedTest.id}/summary`);
 }
