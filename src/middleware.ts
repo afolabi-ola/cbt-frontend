@@ -10,7 +10,6 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   // Check for auth token
   const authToken = request.cookies.get('token');
-  console.log('middleware:', authToken);
 
   // Allow public paths
   if (publicPaths.includes(pathname) && !authToken) {
@@ -29,7 +28,7 @@ export async function middleware(request: NextRequest) {
   // Verify role for admin routes
   if (pathname.startsWith('/admin')) {
     const role = request.cookies.get('role')?.value;
-    console.log('role:', role);
+
     if (role !== 'admin' && role !== 'teacher') {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
