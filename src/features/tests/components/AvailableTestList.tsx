@@ -4,72 +4,37 @@ import { useState } from 'react';
 import AvailableTestCard from './AvailableTestCard';
 import { FaSearch } from 'react-icons/fa';
 import { TestStatus } from '@/lib/constants';
+import { Test } from '@/types/tests.types';
 
-interface Test {
-  id: number;
-  title: string;
-  status: 'active' | 'upcoming' | 'completed';
-  duration: string;
-  totalQuestions: number;
-  description: string;
+interface AvailableTestListProps {
+  tests?: Test[];
 }
 
-const dummyTests: Test[] = [
-  {
-    id: 1,
-    title: 'Math Test',
-    status: 'active',
-    duration: '30',
-    totalQuestions: 10,
-    description: 'Test your math skills and problem-solving ability.',
-  },
-  {
-    id: 2,
-    title: 'Science Test',
-    status: 'upcoming',
-    duration: '45',
-    totalQuestions: 15,
-    description: 'Prepare to test your science knowledge.',
-  },
-  {
-    id: 3,
-    title: 'History Test',
-    status: 'completed',
-    duration: '60',
-    totalQuestions: 20,
-    description: 'Explore the past with our history test.',
-  },
-  {
-    id: 4,
-    title: 'English Grammar',
-    status: 'active',
-    duration: '25',
-    totalQuestions: 12,
-    description: 'Sharpen your grammar and vocabulary skills.',
-  },
-  {
-    id: 5,
-    title: 'Data Analysis',
-    status: 'upcoming',
-    duration: '50',
-    totalQuestions: 18,
-    description: 'Evaluate your analytical thinking and data handling.',
-  },
-];
-
-export default function AvailableTestList() {
+export default function AvailableTestList({ tests = [] }: AvailableTestListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState<
     'all' | 'active' | 'upcoming' | 'completed'
   >('all');
 
-  const filteredTests = dummyTests.filter((test) => {
+  // Transform API tests to match component structure
+  const transformedTests = tests.map((test) => ({
+    id: test.id,
+    title: test.course.title,
+    status: test.testState as 'active' | 'upcoming' | 'completed',
+    duration: test.duration.toString(),
+    totalQuestions: test.bank._count.questions,
+    description: test.title,
+  }));
+
+  const filteredTests = transformedTests.filter((test) => {
     const matchesSearch = test.title
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesFilter = filter === 'all' || test.status === filter;
     return matchesSearch && matchesFilter;
   });
+
+  const hasTests = tests.length > 0;
 
   return (
     <div className='space-y-8 w-2xl'>
@@ -101,33 +66,61 @@ export default function AvailableTestList() {
       </div>
 
       {/* 🧠 Test Lists */}
-      <div className='space-y-8'>
-        {['active', 'upcoming', 'completed'].map((category) => {
-          const tests = filteredTests.filter((t) => t.status === category);
-          if (!tests.length && filter !== 'all') return null;
+      {hasTests ? (
+        <div className='space-y-8'>
+          {['active', 'upcoming', 'completed'].map((category) => {
+            const tests = filteredTests.filter((t) => t.status === category);
+            if (!tests.length && filter !== 'all') return null;
 
-          return (
-            <div key={category}>
-              <h2 className='text-xl font-semibold capitalize mb-4 text-gray-700 pb-2'>
-                {category} Tests
-              </h2>
-              <div className='grid gap-4 '>
-                {tests.map((test) => (
-                  <AvailableTestCard
-                    id={test.id}
-                    key={test.id}
-                    title={test.title}
-                    status={test.status}
-                    duration={test.duration}
-                    totalQuestions={test.totalQuestions}
-                    description={test.description}
-                  />
-                ))}
+            return (
+              <div key={category}>
+                <h2 className='text-xl font-semibold capitalize mb-4 text-gray-700 pb-2'>
+                  {category} Tests
+                </h2>
+                {tests.length > 0 ? (
+                  <div className='grid gap-4'>
+                    {tests.map((test) => (
+                      <AvailableTestCard
+                        id={test.id}
+                        key={test.id}
+                        title={test.title}
+                        status={test.status}
+                        duration={test.duration}
+                        totalQuestions={test.totalQuestions}
+                        description={test.description}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className='border border-neutral-200 rounded-lg p-8 text-center'>
+                    <p className='text-neutral-600'>No {category} tests</p>
+                  </div>
+                )}
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className='border border-neutral-200 rounded-lg p-12 text-center'>
+          <svg
+            className='w-16 h-16 text-gray-300 mx-auto mb-4'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={1.5}
+              d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
+            />
+          </svg>
+          <p className='text-gray-600 font-medium text-lg'>No tests available</p>
+          <p className='text-sm text-gray-500 mt-2'>
+            Check back later for new tests
+          </p>
+        </div>
+      )}
     </div>
   );
 }

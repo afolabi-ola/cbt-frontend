@@ -14,7 +14,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       console.warn('Unauthorized — redirect to login');
       // Example: window.location.href = '/';
-      //   window.location.href = '/';
+      // window.location.href = '/';
     }
     return Promise.reject(error);
   },
