@@ -1,4 +1,6 @@
 import { authService } from '@/services/authService';
+import { LoginPayload, LoginResponse } from '@/types/auth.types';
+import { AppError } from '@/types/errors.types';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -9,11 +11,10 @@ export default function useLogin() {
     mutate: login,
     isPending: isLoginPending,
     isError: isLoginError,
-  } = useMutation({
+  } = useMutation<LoginResponse, AppError, LoginPayload>({
     mutationFn: authService.login,
     mutationKey: ['login'],
     onSuccess: (data) => {
-      console.log(data);
       if (data.success) {
         toast.success(data.message);
         push('/dashboard');
@@ -21,8 +22,7 @@ export default function useLogin() {
     },
 
     onError: (err) => {
-      toast.error(err.message);
-      console.log(err);
+      toast.error((err.details as string).toUpperCase());
     },
   });
 
