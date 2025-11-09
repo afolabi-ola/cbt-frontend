@@ -1,9 +1,11 @@
-export type UserRole = 'student' | 'admin' | 'teacher';
+export type UserRole = "STUDENT" | "ADMIN" | "TEACHER";
 
 export interface User {
   id: string;
   username: string;
   role: UserRole;
+  firstname: string;
+  lastname: string;
 }
 
 export interface AuthState {
@@ -21,7 +23,7 @@ export interface LoginResponse {
   success: boolean;
   message: string;
   data: {
-    user: User;
+    data: User;
   };
   token: string;
 }
