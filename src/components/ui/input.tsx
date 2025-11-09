@@ -24,12 +24,11 @@ const Input = <T extends FieldValues>({
       <label htmlFor={id}>
         {label && <span className="text-sm text-neutral-600">{label}</span>}
         <input
-          autoFocus
           {...rest}
+          autoFocus
           type={type}
-          placeholder="Create New Class"
           {...hookFormRegister?.(name as Path<T>)}
-          className="block w-full rounded-md border border-neutral-300 p-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 bg-background text-foreground caret-foreground"
+          className="block w-full rounded-md border border-neutral-300 p-1 h-10 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 bg-background text-foreground caret-foreground"
         />
       </label>
       {errorText && <small className="text-error-500">{errorText}</small>}

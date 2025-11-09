@@ -36,6 +36,8 @@ export default function AdminSettingsPage() {
 
   return (
     <section className="flex flex-col gap-4 w-full">
+      <h1 className="text-4xl text-foreground font-bold">System Settings</h1>
+
       <form
         onSubmit={handleSubmit(updateSettings)}
         className="flex flex-col gap-3 w-full"

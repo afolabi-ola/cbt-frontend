@@ -8,6 +8,9 @@ import { FaUser } from "react-icons/fa6";
 import { HiUserGroup } from "react-icons/hi";
 import { LuBuilding2 } from "react-icons/lu";
 import AppTable, { TableDataItem } from "@/components/table";
+import { useRouter } from "next/navigation";
+import { useGetClasses } from "@/features/dashboard/queries/useDashboard";
+import { errorLogger } from "@/lib/axios";
 
 const quickStats: { icon: ReactNode; label: string; count: string }[] = [
   { icon: <FaUser color="#0284c7" />, label: "Total Classes", count: "12" },
@@ -51,6 +54,19 @@ const headerColumns = [
 ];
 
 const AdminClasses = () => {
+  const {
+    data: allClasses,
+    isLoading: classesLoading,
+    error: classesError,
+  } = useGetClasses();
+  const { push } = useRouter();
+
+  console.log({ allClasses });
+
+  if (classesError) {
+    return errorLogger(classesError);
+  }
+
   return (
     <section className="flex flex-col gap-4 w-full">
       <h1 className="text-2xl font-semibold">Manage Classes</h1>
@@ -63,7 +79,7 @@ const AdminClasses = () => {
             </div>
 
             <div>
-              <Button>
+              <Button disabled={classesLoading}>
                 <div className="flex flex-row items-center gap-2 w-full">
                   <GoPlus />
                   <span>Create New Class</span>
@@ -74,9 +90,10 @@ const AdminClasses = () => {
 
           <AppTable
             data={classes}
+            isLoading={classesLoading}
             headerColumns={headerColumns}
             itemKey={({ itemIndex }) => `${itemIndex}`}
-            onRowPress={({ item }) => console.log(item)}
+            onRowPress={({ item }) => push(`/admin/classes/${item.class}`)}
             renderItem={({ item }) => (
               <>
                 <TableDataItem>{item.class}</TableDataItem>

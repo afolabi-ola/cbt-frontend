@@ -1,6 +1,11 @@
 import api from "@/lib/axios";
 import internalApi from "@/lib/internalApi";
-import { LoginPayload, LoginResponse, UserRole } from "@/types/auth.types";
+import {
+  LoginPayload,
+  LoginResponse,
+  RegisterPayload,
+  UserRole,
+} from "@/types/auth.types";
 import axios from "axios";
 
 export async function proxySetCookie({
@@ -69,6 +74,11 @@ export const authService = {
     }
 
     // Return login data (for UI state or redirect)
+    return response.data;
+  },
+
+  register: async (payload: RegisterPayload) => {
+    const response = await api.post(`${AUTH_BASE}/register`, payload);
     return response.data;
   },
 

@@ -1,5 +1,5 @@
-import Loading from "@/app/loading";
 import { ReactNode } from "react";
+import SpinnerMini from "../ui/SpinnerMini";
 
 interface TableDataItemProps {
   children: ReactNode;
@@ -62,7 +62,7 @@ const AppTable = <T,>({
 
         <tbody className="bg-grey-30">
           {isLoading ? (
-            <Loading />
+            <SpinnerMini />
           ) : (
             data?.map((item, itemIndex) => {
               const hasRowPress = !!onRowPress;
