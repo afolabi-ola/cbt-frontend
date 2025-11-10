@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Card from '@/components/ui/Card';
-import Input from '@/components/ui/Input';
+import Input from '@/features/profile/components/Input';
 import Button from '@/components/ui/Button';
 import { PersonalInformation } from '@/types/profile.types';
 

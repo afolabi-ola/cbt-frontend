@@ -66,13 +66,13 @@ const AdminSidebar = ({ isOpen, setIsOpen }: AdminSidebarProps) => {
   return (
     <>
       {/* desktop view */}
-      <section className="hidden md:block w-full max-w-70 max-h-screen sticky top-0 overflow-y-auto">
-        <aside className="flex flex-col gap-12 w-full justify-between bg-primary-700 h-full p-4">
-          <div className="flex flex-col gap-12 w-full">
-            <h1 className="text-4xl text-white font-bold">Florintech</h1>
+      <section className='hidden md:block w-full max-w-70 max-h-screen sticky top-0 overflow-y-auto'>
+        <aside className='flex flex-col gap-12 w-full justify-between bg-primary-700 h-full p-4'>
+          <div className='flex flex-col gap-12 w-full'>
+            <h1 className='text-4xl text-white font-bold'>Florintech</h1>
 
-            <nav className="w-full">
-              <ul className="flex flex-col gap-4 w-full">
+            <nav className='w-full'>
+              <ul className='flex flex-col gap-4 w-full'>
                 {adminRoutes.map((route) => {
                   const isActive = route.path === pathname;
 
@@ -83,7 +83,7 @@ const AdminSidebar = ({ isOpen, setIsOpen }: AdminSidebarProps) => {
                         prefetch={isPrefetched ? null : false}
                         onMouseEnter={() => setIsPrefetched(true)}
                         className={`flex flex-row items-center gap-4 text-base  font-normal ${
-                          isActive ? "text-white" : "text-neutral-300"
+                          isActive ? 'text-white' : 'text-neutral-300'
                         }`}
                       >
                         <>{route.icon}</>
@@ -99,34 +99,38 @@ const AdminSidebar = ({ isOpen, setIsOpen }: AdminSidebarProps) => {
           <Button onClick={mutate} disabled={isLoggingOut}>
             {isLoggingOut ? (
               <>
-                <span className=" mr-2">Logging Out</span>
+                <span className=' mr-2'>Logging Out</span>
                 <SpinnerMini />
               </>
             ) : (
-              "Logout"
+              'Logout'
             )}
           </Button>
         </aside>
       </section>
 
       {/* mobile view */}
-      <div className="block md:hidden min-h-screen">
+      <div className='block md:hidden min-h-screen'>
         <aside
           className={`fixed inset-y-0 left-0 z-40 w-64 transform bg-primary-700 text-white p-4 transition-transform duration-300 flex flex-col gap-12 justify-between ease-in-out lg:translate-x-0 ${
-            isOpen ? "translate-x-0" : "-translate-x-full"
+            isOpen ? 'translate-x-0' : '-translate-x-full'
           }
         `}
         >
-          <div className="flex flex-col gap-12 w-full">
-            <div className="flex flex-row items-center justify-between mb-6">
-              <h1 className="text-xl font-bold">Florintech</h1>
-              <button onClick={handleCloseSidebar} className="cursor-pointer">
+          <div className='flex flex-col gap-12 w-full'>
+            <div className='flex flex-row items-center justify-between mb-6'>
+              <h1 className='text-xl font-bold'>Florintech</h1>
+              <button
+                aria-label='closeSidebar'
+                onClick={handleCloseSidebar}
+                className='cursor-pointer'
+              >
                 <MdOutlineClose />
               </button>
             </div>
 
-            <nav className="w-full">
-              <ul className="flex flex-col gap-4 w-full">
+            <nav className='w-full'>
+              <ul className='flex flex-col gap-4 w-full'>
                 {adminRoutes.map((route) => {
                   const isActive = route.path === pathname;
 
@@ -138,7 +142,7 @@ const AdminSidebar = ({ isOpen, setIsOpen }: AdminSidebarProps) => {
                         onMouseEnter={() => setIsPrefetched(true)}
                         onClick={handleCloseSidebar}
                         className={`flex flex-row items-center gap-4 text-base  font-normal ${
-                          isActive ? "text-white" : "text-neutral-300"
+                          isActive ? 'text-white' : 'text-neutral-300'
                         }`}
                       >
                         <>{route.icon}</>
@@ -154,11 +158,11 @@ const AdminSidebar = ({ isOpen, setIsOpen }: AdminSidebarProps) => {
           <Button onClick={mutate} disabled={isLoggingOut}>
             {isLoggingOut ? (
               <>
-                <span className=" mr-2">Logging Out</span>
+                <span className=' mr-2'>Logging Out</span>
                 <SpinnerMini />
               </>
             ) : (
-              "Logout"
+              'Logout'
             )}
           </Button>
         </aside>
@@ -166,7 +170,7 @@ const AdminSidebar = ({ isOpen, setIsOpen }: AdminSidebarProps) => {
         {/* overlay */}
         {isOpen && (
           <div
-            className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+            className='fixed inset-0 z-30 bg-black/50 lg:hidden'
             onClick={handleCloseSidebar}
           />
         )}
