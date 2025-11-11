@@ -33,8 +33,9 @@ export default function StudentProfilePage() {
   // Handler for changing password
   const handleChangePassword = (data: PasswordChange) => {
     updatePassword({
-      oldPassword: data.currentPassword,
+      currentPassword: data.currentPassword,
       newPassword: data.newPassword,
+      confirmPassword: data.confirmPassword,
     });
   };
 

@@ -44,7 +44,7 @@ const RecentResultsTable: React.FC<RecentResultsTableProps> = ({ results }) => {
                       result.score.toLowerCase() === 'unreleased' ||
                       result.score.toLowerCase() === 'null'
                         ? 'bg-gray-300 text-gray-500'
-                        : parseInt(result.score) >= 50
+                        : result.status.toLowerCase() === 'passed'
                         ? 'bg-green-100 text-green-700'
                         : 'bg-red-100 text-red-700'
                     }`}

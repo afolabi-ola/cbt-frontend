@@ -15,8 +15,8 @@ export async function POST(req: NextRequest) {
       message: 'Login successful',
     });
 
-    // const isDev = process.env.NODE_ENV === 'development';
-    // console.log(process.env.NODE_ENV === 'production');
+    const isProd = process.env.NODE_ENV === 'production';
+    console.log(process.env.NODE_ENV === 'production');
 
     response.cookies.set('token', token, {
       httpOnly: true,
@@ -27,8 +27,8 @@ export async function POST(req: NextRequest) {
 
     response.cookies.set('role', role.toLowerCase(), {
       httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
       path: '/',
     });
 

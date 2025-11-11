@@ -10,6 +10,8 @@ interface Test {
   description: string;
   status: TestStatus;
   attemptsAllowed: number;
+  sessionId: number | null;
+  progress?: 'not-started' | 'in-progress' | 'completed' | null;
 }
 
 interface TestContextType {

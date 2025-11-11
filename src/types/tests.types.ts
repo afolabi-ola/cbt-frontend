@@ -220,7 +220,6 @@ export interface Test {
   id: number;
   title: string;
   type: string;
-  testState: string;
   startTime: string;
   endTime: string;
   duration: string;
@@ -229,6 +228,9 @@ export interface Test {
   createdAt: string;
   course: TestCourse;
   bank: TestBank;
+  testState: 'active' | 'scheduled' | 'completed';
+  progress?: 'not-started' | 'in-progress' | null;
+  sessionId: number | null;
 }
 
 export interface TestsResponse {
@@ -265,3 +267,22 @@ export interface FetchQuestionsByNumberResponse {
     showSubmitButton: boolean;
   };
 }
+
+// Registered Courses
+export interface CourseTeacher {
+  id: number;
+  firstname: string;
+  lastname: string;
+}
+
+export interface RegisteredCourse {
+  id: number;
+  title: string;
+  description: string;
+  teacherId: number;
+  createdAt: string;
+  teacher: CourseTeacher;
+}
+
+// API returns direct array, not wrapped in success/message/data
+export type RegisteredCoursesResponse = RegisteredCourse[];

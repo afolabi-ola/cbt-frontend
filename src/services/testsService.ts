@@ -11,6 +11,7 @@ import {
   SubmitAnswersAndGetPreviousRequest,
   SubmitAnswersAndGetPreviousResponse,
   FetchQuestionsByNumberResponse,
+  RegisteredCoursesResponse,
 } from '@/types/tests.types';
 
 export const testsServices = {
@@ -18,6 +19,11 @@ export const testsServices = {
     const response = await axios.get('/tests', {
       withCredentials: true,
     });
+    return response.data;
+  },
+
+  getRegisteredCourses: async (): Promise<RegisteredCoursesResponse> => {
+    const response = await axios.get('/courses');
     return response.data;
   },
 };

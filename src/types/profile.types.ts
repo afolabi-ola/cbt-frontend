@@ -53,8 +53,9 @@ export interface UpdateProfileResponse {
 
 // Update password payload/response
 export interface UpdatePasswordRequest {
-  oldPassword: string;
+  currentPassword: string;
   newPassword: string;
+  confirmPassword: string;
 }
 
 export interface UpdatePasswordResponse {
