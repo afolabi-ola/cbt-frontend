@@ -12,9 +12,10 @@ interface TestCardProps {
   totalQuestions: number;
   durationMinutes: number;
   testStatus: 'active' | 'scheduled' | 'completed';
-  progressStatus: 'not-started' | 'in-progress' | 'completed';
+  progressStatus: 'not-started' | 'in-progress' | 'completed' | null;
   description?: string;
   attemptsAllowed: number;
+  sessionId: number | null;
 }
 
 export default function DashboardTestCard({
@@ -27,6 +28,7 @@ export default function DashboardTestCard({
   progressStatus,
   description = '',
   attemptsAllowed,
+  sessionId,
 }: TestCardProps) {
   const { push } = useRouter();
   const { setSelectedTest } = useTest();
@@ -40,6 +42,8 @@ export default function DashboardTestCard({
       totalQuestions,
       description,
       attemptsAllowed,
+      sessionId: sessionId,
+      progress: progressStatus,
     });
     push(`/tests/${id}/summary`);
   };
@@ -52,7 +56,7 @@ export default function DashboardTestCard({
       : 'bg-gray-400';
 
   return (
-    <div className='w-full min-w-[350px] max-w-[350px] p-4 space-y-4 bg-card container rounded-lg shadow-md border border-neutral-200'>
+    <div className='w-full min-w-[350px] p-4 space-y-4 bg-card container rounded-lg shadow-md border border-neutral-200'>
       <div className='flex gap-2 items-center'>
         <span className='text-primary-600'>
           <PiNotepadFill size={40} />
@@ -90,11 +94,16 @@ export default function DashboardTestCard({
           <span className='text-neutral-800 font-normal text-base'>
             Progress
           </span>
-          <span>{progressStatus.replace('-', ' ')}</span>
+          <span>
+            {progressStatus ? progressStatus.replace('-', ' ') : 'Not Started'}
+          </span>
         </p>
       </div>
 
-      <Button label='View Test' onClick={handleViewTest} />
+      <Button
+        label={sessionId !== null ? 'Resume Test' : 'View Test'}
+        onClick={handleViewTest}
+      />
     </div>
   );
 }

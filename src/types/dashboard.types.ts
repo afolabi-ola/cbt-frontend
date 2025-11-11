@@ -52,8 +52,9 @@ export interface ActiveTest {
   attemptsAllowed?: number;
   duration?: number;
   totalQuestions?: number;
-  status?: 'active' | 'scheduled' | 'completed';
-  progress?: 'not-started' | 'in-progress';
+  testState?: 'active' | 'scheduled' | 'completed';
+  progress?: 'not-started' | 'in-progress' | null;
+  sessionId: number | null;
 }
 
 export interface StudentClass {

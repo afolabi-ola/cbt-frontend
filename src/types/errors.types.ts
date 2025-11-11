@@ -8,10 +8,10 @@ export interface ApiErrorResponse {
 /** Normalized application error passed to React Query onError handlers */
 export interface AppError extends Error {
   name: 'AppError';
-  status?: number; // HTTP status if available
-  code?: string; // Axios/network error code
-  details: unknown | null; // backend details or raw response data
-  isAxiosError?: boolean; // hint original source
+  status?: number;
+  code?: string;
+  details: string | null;
+  isAxiosError?: boolean;
 }
 
 /** Type guard to check if an unknown value is AppError */

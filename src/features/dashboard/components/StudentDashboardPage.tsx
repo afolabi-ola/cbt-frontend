@@ -3,9 +3,9 @@
 import Calender from '@/components/ui/Calender';
 import ExamTips from '@/features/dashboard/components/ExamTips';
 import NotificationsSection from '@/components/feedback/NotificationSection';
-import RecentResultsTable from '@/features/results/components/RecentResultsTable';
+import ResultsTable from '@/features/results/components/ResultsTable';
 import DashboardTestCard from '@/features/dashboard/components/DashboardTestCard';
-import useDashboard from '../hooks/useDashboard';
+import useDashboard from '../queries/useDashboard';
 
 export default function StudentDashboardPage() {
   const { dashboardData, dashboardDataError, isDashboardDataLoading } =
@@ -67,12 +67,15 @@ export default function StudentDashboardPage() {
   const hasActiveTests = activeTests.length > 0;
   const recentResultsCourses = data?.recentResults?.courses || [];
   const notifications = data?.notifications || [];
+  const studentClass = data?.className || 'N/A';
 
   // Transform recent results for table
   const recentResults = recentResultsCourses.flatMap((courseData) =>
     courseData.tests.map((test) => ({
-      subject: courseData.course.title,
-      score: `${test.session.score}`,
+      course: courseData.course.title,
+      title: test.title || 'N/A',
+      type: test.type || 'N/A',
+      score: test.session.score,
       date: new Date(test.session.endedAt).toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
@@ -84,30 +87,39 @@ export default function StudentDashboardPage() {
 
   return (
     <div className='grid grid-cols-1 md:flex gap-6'>
-      <div className='space-y-8 flex-1'>
+      <div className='space-y-8 flex-1 gap-8 flex flex-col'>
         {/* Student Info and welcome */}
-        <div className='space-y-2'>
-          <h1 className='text-3xl font-semibold'>
-            Welcome back, <span className='capitalize'>{studentName}</span> 👋
-          </h1>
-          <p className='font-light'>Ready to ace your next test today?</p>
+        <div className='space-y-2 flex justify-between h-6'>
+          <div className='space-y-2'>
+            <h1 className='text-3xl font-semibold'>
+              Welcome back, <span className='capitalize'>{studentName}</span> 👋
+            </h1>
+            <p className='font-light'>Ready to ace your next test today?</p>
+          </div>
+          <div className='flex gap-2'>
+            <span>Class:</span>
+            <span className='inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200'>
+              {studentClass || 'N/A'}
+            </span>
+          </div>
         </div>
 
         <div className='space-y-4'>
           <h1 className='text-2xl'>Active and upcoming tests</h1>
           {hasActiveTests ? (
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4'>
               {activeTests.map((test) => (
                 <DashboardTestCard
                   key={test.id}
                   id={test.id}
                   title={test.title}
                   course={test.course.title}
-                  testStatus={test.status || 'scheduled'}
+                  testStatus={test.testState || 'scheduled'}
                   totalQuestions={test.totalQuestions || 60}
                   durationMinutes={test.duration || 40}
                   progressStatus={test.progress || 'not-started'}
                   attemptsAllowed={test.attemptsAllowed || 1}
+                  sessionId={test.sessionId}
                 />
               ))}
             </div>
@@ -124,7 +136,7 @@ export default function StudentDashboardPage() {
         <div className='space-y-4'>
           {/* Recent Results */}
           <h1 className='text-2xl'>Recent Results</h1>
-          <RecentResultsTable results={recentResults} />
+          <ResultsTable results={recentResults} />
           <div className='w-full flex justify-center'>
             <button className='rounded p-2 bg-primary-50 text-primary-900 cursor-pointer hover:bg-primary-100 transition-colors'>
               View all results
@@ -154,5 +166,3 @@ export default function StudentDashboardPage() {
     </div>
   );
 }
-
-

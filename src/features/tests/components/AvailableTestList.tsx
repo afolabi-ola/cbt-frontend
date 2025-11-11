@@ -20,14 +20,13 @@ export default function AvailableTestList({ tests = [] }: AvailableTestListProps
   const transformedTests = tests.map((test) => ({
     id: test.id,
     title: test.course.title,
-    status: test.testState.toLocaleLowerCase() as
-      | 'active'
-      | 'scheduled'
-      | 'completed',
+    status: test.testState,
     duration: test.duration.toString(),
     totalQuestions: test.bank._count.questions,
     description: test.title,
     attemptsAllowed: test.attemptsAllowed,
+    sessionId: test.sessionId,
+    progress: test.progress,
   }));
 
   const filteredTests = transformedTests.filter((test) => {
@@ -93,6 +92,8 @@ export default function AvailableTestList({ tests = [] }: AvailableTestListProps
                         totalQuestions={test.totalQuestions}
                         description={test.description}
                         attemptsAllowed={test.attemptsAllowed}
+                        sessionId={test.sessionId}
+                        progress={test.progress}
                       />
                     ))}
                   </div>
