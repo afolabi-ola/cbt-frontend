@@ -84,7 +84,7 @@ export default function StudentTestPage() {
         <div className='space-y-2'>
           <h1 className='text-2xl'>Registered Courses</h1>
 
-          <RegisteredCoursesSection tests={tests} />
+          <RegisteredCoursesSection />
         </div>
 
         <div>

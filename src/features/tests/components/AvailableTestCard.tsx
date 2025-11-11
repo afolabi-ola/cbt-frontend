@@ -14,6 +14,8 @@ interface AvailableTestCardProps {
   totalQuestions: number;
   description: string;
   attemptsAllowed: number;
+  progress?: 'not-started' | 'in-progress' | null;
+  sessionId: number | null;
 }
 export default function AvailableTestCard({
   id,
@@ -23,6 +25,8 @@ export default function AvailableTestCard({
   totalQuestions,
   description,
   attemptsAllowed,
+  sessionId,
+  progress,
 }: AvailableTestCardProps) {
   const { push } = useRouter();
 
@@ -50,6 +54,8 @@ export default function AvailableTestCard({
       description,
       id: 1,
       attemptsAllowed,
+      sessionId,
+      progress,
     }); // example id
     push(`/tests/${id}/summary`);
   };
@@ -87,10 +93,11 @@ export default function AvailableTestCard({
 
         <div>
           {status === 'active' ? (
-            <Button label={'View Test'} onClick={handleViewTest} />
-          ) : (
-            <Button label={'View Details'} />
-          )}
+            <Button
+              label={sessionId ? 'Resume Test' : 'View Test'}
+              onClick={handleViewTest}
+            />
+          ) : null}
         </div>
       </div>
     </div>

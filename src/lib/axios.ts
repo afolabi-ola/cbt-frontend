@@ -51,9 +51,7 @@ api.interceptors.response.use(
     appError.name = "AppError";
     appError.status = status;
     appError.code = code;
-    appError.details = (backendDetails ?? backendData ?? null) as
-      | unknown
-      | null;
+    appError.details = (backendDetails ?? backendData ?? null) as string | null;
     appError.isAxiosError = Boolean(error.isAxiosError);
 
     return Promise.reject(appError);

@@ -102,7 +102,7 @@ export default function TestSummaryPage() {
         <div>
           <Button
             disabled={isStartingTest}
-            label='Start Test'
+            label={selectedTest.sessionId ? 'Resume' : 'Start Test'}
             onClick={() => handleAttemptTest()}
           />
         </div>
