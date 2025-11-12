@@ -35,7 +35,6 @@ export interface PersonalInformation {
 
 export interface AcademicInformation {
   className: string;
-  registeredCourses?: string[];
 }
 
 // Update profile payload/response

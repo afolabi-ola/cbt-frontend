@@ -1,47 +1,29 @@
-// import { verifyUserToken } from '@/app/_lib/auth';
-// import { cookies } from 'next/headers';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function POST() {
-  // try {
-  //   const cookieStore = await cookies();
-  //   const token = cookieStore.get('token')?.value;
+  try {
+    const cookieStore = await cookies();
 
-  //   let userRole = 'user';
+    // Delete cookies
+    cookieStore.delete('token');
+    cookieStore.delete('role');
 
-  //   if (token) {
-  //     try {
-  //       const payload = await verifyUserToken(token);
-  //       userRole = String(payload?.role) || 'user';
-  //     } catch (err) {
-  //       console.error('Token invalid or expired', err);
-  //     }
-  //   }
+    // Send response
+    const res = NextResponse.json({
+      success: true,
+      message: 'Logged out successfully',
+    });
 
-  //   const res = NextResponse.json({
-  //     success: true,
-  //     message: 'Logged out',
-  //     userRole,
-  //   });
+    res.cookies.set('token', '', { path: '/', expires: new Date(0) });
+    res.cookies.set('role', '', { path: '/', expires: new Date(0) });
 
-  //   cookieStore.delete('token');
-
-  //   // res.cookies.set('token', '', {
-  //   //   httpOnly: true,
-  //   //   secure: process.env.NODE_ENV === 'production',
-  //   //   sameSite: 'strict',
-  //   //   path: '/',
-  //   //   maxAge: 0,
-  //   // });
-
-  //   return res;
-  // } catch (error) {
-  //   console.error('Internal server Error:', error);
-  //   return NextResponse.json({
-  //     success: false,
-  //     message: 'Error while logging out',
-  //   });
-  // }
-
-  return NextResponse.json({ message: 'ok' });
+    return res;
+  } catch (error) {
+    console.error('Internal server error during logout:', error);
+    return NextResponse.json(
+      { success: false, message: 'Error while logging out' },
+      { status: 500 },
+    );
+  }
 }

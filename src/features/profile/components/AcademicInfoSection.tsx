@@ -1,6 +1,7 @@
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import { AcademicInformation } from '@/types/profile.types';
+import RegisteredCoursesSection from '@/features/tests/components/RegisteredCoursesSection';
 
 interface AcademicInfoSectionProps {
   data: AcademicInformation;
@@ -32,22 +33,7 @@ export default function AcademicInfoSection({
 
         {/* Registered Courses */}
         <div>
-          <label className='block text-sm font-medium text-neutral-700 mb-2'>
-            Registered Courses
-          </label>
-          <div className='flex flex-wrap gap-2'>
-            {data.registeredCourses && data.registeredCourses.length > 0 ? (
-              data.registeredCourses.map((course) => (
-                <Badge key={course} variant='primary'>
-                  {course}
-                </Badge>
-              ))
-            ) : (
-              <p className='text-sm text-neutral-500 italic'>
-                No courses registered yet
-              </p>
-            )}
-          </div>
+          <RegisteredCoursesSection />
         </div>
       </div>
     </Card>

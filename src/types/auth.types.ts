@@ -35,3 +35,6 @@ export interface LoginResponse {
   };
   token: string;
 }
+
+export interface LogoutResponse{ success: boolean, message: string };
+  
