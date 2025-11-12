@@ -10,6 +10,9 @@ import ButtonIcon from '../ui/ButtonIcon';
 import toast from 'react-hot-toast';
 import { ThemeToggle } from './ThemeToggle';
 import { useState } from 'react';
+import { HiArrowRightOnRectangle } from 'react-icons/hi2';
+import useLogout from '@/hooks/useLogout';
+import { Button, SpinnerMini } from '../ui';
 
 const navigationLinks = [
   { name: 'Dashboard', href: '/dashboard' },
@@ -21,6 +24,7 @@ const navigationLinks = [
 export default function StudentDashboardHeader() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { logout, isLoggingOut } = useLogout();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -65,6 +69,19 @@ export default function StudentDashboardHeader() {
           </ButtonIcon>
           <div className='hidden sm:block'>
             <ThemeToggle />
+          </div>
+          <div className='hidden sm:block'>
+            <ButtonIcon
+              onClick={logout}
+              disabled={isLoggingOut}
+              ariaLabel='Logout'
+            >
+              {isLoggingOut ? (
+                <SpinnerMini color='text-primary' />
+              ) : (
+                <HiArrowRightOnRectangle size={24} />
+              )}
+            </ButtonIcon>
           </div>
           <div className='hidden sm:block'>
             <ProfilePic />
@@ -119,6 +136,17 @@ export default function StudentDashboardHeader() {
                 <IoIosNotifications size={24} />
               </ButtonIcon>
               <ThemeToggle />
+              <ButtonIcon
+                onClick={logout}
+                disabled={isLoggingOut}
+                ariaLabel='Logout'
+              >
+                {isLoggingOut ? (
+                  <SpinnerMini color='text-primary' />
+                ) : (
+                  <HiArrowRightOnRectangle size={24} />
+                )}
+              </ButtonIcon>
             </div>
             <ProfilePic />
           </div>

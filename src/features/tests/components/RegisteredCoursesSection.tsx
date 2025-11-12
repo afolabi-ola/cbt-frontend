@@ -15,9 +15,9 @@ export default function RegisteredCoursesSection() {
 
   return (
     <section className='p-6 bg-white rounded-xl shadow-sm border border-gray-100 space-y-4'>
-      <h2 className='text-lg font-semibold text-gray-700 border-b pb-2'>
+      <label className='block text-sm font-medium text-neutral-700 mb-2'>
         Registered Courses
-      </h2>
+      </label>
 
       {/* Loading State */}
       {isRegisteredCoursesLoading && (

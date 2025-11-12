@@ -5,12 +5,11 @@ import { IoIosSettings } from "react-icons/io";
 import { MdOutlineClose } from "react-icons/md";
 import { GiTeacher } from "react-icons/gi";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import Button from "../ui/Button";
-import { useMutation } from "@tanstack/react-query";
-import { authService } from "@/services/authService";
-import toast from "react-hot-toast";
-import SpinnerMini from "../ui/SpinnerMini";
+import { usePathname } from 'next/navigation';
+import Button from '../ui/Button';
+
+import SpinnerMini from '../ui/SpinnerMini';
+import useLogout from '@/hooks/useLogout';
 
 interface AdminSidebarProps {
   isOpen: boolean;
@@ -19,23 +18,23 @@ interface AdminSidebarProps {
 
 const adminRoutes: { path: string; label: string; icon: ReactNode }[] = [
   {
-    path: "/admin/dashboard",
-    label: "Dashboard",
+    path: '/admin/dashboard',
+    label: 'Dashboard',
     icon: <AiFillHome size={20} />,
   },
   {
-    path: "/admin/classes",
-    label: "Classes",
+    path: '/admin/classes',
+    label: 'Classes',
     icon: <GiGraduateCap size={20} />,
   },
   {
-    path: "/admin/teachers",
-    label: "Teachers",
+    path: '/admin/teachers',
+    label: 'Teachers',
     icon: <GiTeacher size={20} />,
   },
   {
-    path: "/admin/settings",
-    label: "System Settings",
+    path: '/admin/settings',
+    label: 'System Settings',
     icon: <IoIosSettings size={20} />,
   },
 ];
@@ -43,25 +42,9 @@ const adminRoutes: { path: string; label: string; icon: ReactNode }[] = [
 const AdminSidebar = ({ isOpen, setIsOpen }: AdminSidebarProps) => {
   const [isPrefetched, setIsPrefetched] = useState<boolean>(false);
   const pathname = usePathname();
-  const { replace } = useRouter();
+  const { logout, isLoggingOut } = useLogout();
 
   const handleCloseSidebar = () => setIsOpen(false);
-
-  const { mutate, isPending: isLoggingOut } = useMutation({
-    mutationFn: authService.logout,
-    onMutate: () => {
-      replace("/");
-      // todo: clear cookies from storage
-    },
-
-    onSuccess: () => {
-      toast.success("Logout Successful");
-    },
-
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
 
   return (
     <>
@@ -96,7 +79,7 @@ const AdminSidebar = ({ isOpen, setIsOpen }: AdminSidebarProps) => {
             </nav>
           </div>
 
-          <Button onClick={mutate} disabled={isLoggingOut}>
+          <Button onClick={logout} disabled={isLoggingOut}>
             {isLoggingOut ? (
               <>
                 <span className=' mr-2'>Logging Out</span>
@@ -155,7 +138,7 @@ const AdminSidebar = ({ isOpen, setIsOpen }: AdminSidebarProps) => {
             </nav>
           </div>
 
-          <Button onClick={mutate} disabled={isLoggingOut}>
+          <Button onClick={logout} disabled={isLoggingOut}>
             {isLoggingOut ? (
               <>
                 <span className=' mr-2'>Logging Out</span>
