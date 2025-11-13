@@ -22,3 +22,12 @@ export const useGetClasses = () => {
 
   return queryResponse;
 };
+
+export const useGetTeachers = () => {
+  const queryResponse = useQuery({
+    queryFn: dashboardServices.getAllTeacher,
+    queryKey: ["teachers"],
+  });
+
+  return queryResponse;
+};

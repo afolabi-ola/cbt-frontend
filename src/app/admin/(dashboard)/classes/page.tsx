@@ -5,51 +5,21 @@ import { GoPlus } from "react-icons/go";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/input";
 import { FaUser } from "react-icons/fa6";
-import { HiUserGroup } from "react-icons/hi";
-import { LuBuilding2 } from "react-icons/lu";
+// import { HiUserGroup } from "react-icons/hi";
+// import { LuBuilding2 } from "react-icons/lu";
 import AppTable, { TableDataItem } from "@/components/table";
 import { useRouter } from "next/navigation";
-import { useGetClasses } from "@/features/dashboard/queries/useDashboard";
+import {
+  useGetClasses,
+  useGetTeachers,
+} from "@/features/dashboard/queries/useDashboard";
 import { errorLogger } from "@/lib/axios";
-
-const quickStats: { icon: ReactNode; label: string; count: string }[] = [
-  { icon: <FaUser color="#0284c7" />, label: "Total Classes", count: "12" },
-  {
-    icon: <HiUserGroup color="#0284c7" />,
-    label: "Total Students",
-    count: "1,344",
-  },
-  { icon: <LuBuilding2 color="#0284c7" />, label: "Departments", count: "6" },
-];
-
-const classes: {
-  class: string;
-  department: string;
-  level: string;
-  student: string;
-  created: string;
-}[] = [
-  {
-    class: "ND1 Computer",
-    department: "CS",
-    level: "ND1",
-    student: "90",
-    created: "Oct 5, 2025",
-  },
-  {
-    class: "ND2 Computer",
-    department: "CS",
-    level: "ND2",
-    student: "100",
-    created: "Oct 15, 2025",
-  },
-];
+import { formatDate } from "../../../../../utils/helpers";
 
 const headerColumns = [
   "Class Name",
-  "Department",
-  "Level",
-  "Total Students",
+  "Teacher's Name",
+  "Total Courses",
   "Created On",
 ];
 
@@ -59,12 +29,32 @@ const AdminClasses = () => {
     isLoading: classesLoading,
     error: classesError,
   } = useGetClasses();
+
+  const {
+    data: allTeachers,
+    isLoading: teachersLoading,
+    error: teachersError,
+  } = useGetTeachers();
   const { push } = useRouter();
 
-  console.log({ allClasses });
+  const quickStats: { icon: ReactNode; label: string; count: number }[] = [
+    {
+      icon: <FaUser color="#0284c7" />,
+      label: "Total Classes",
+      count: allClasses ? allClasses?.length : 0,
+    },
+    // {
+    //   icon: <HiUserGroup color="#0284c7" />,
+    //   label: "Total Students",
+    //   count: "1,344",
+    // },
+  ];
 
   if (classesError) {
-    return errorLogger(classesError);
+    errorLogger(classesError);
+  }
+  if (teachersError) {
+    errorLogger(teachersError);
   }
 
   return (
@@ -79,7 +69,7 @@ const AdminClasses = () => {
             </div>
 
             <div>
-              <Button disabled={classesLoading}>
+              <Button disabled={classesLoading || teachersLoading}>
                 <div className="flex flex-row items-center gap-2 w-full">
                   <GoPlus />
                   <span>Create New Class</span>
@@ -89,18 +79,19 @@ const AdminClasses = () => {
           </div>
 
           <AppTable
-            data={classes}
+            data={allClasses ?? []}
             isLoading={classesLoading}
             headerColumns={headerColumns}
             itemKey={({ itemIndex }) => `${itemIndex}`}
-            onRowPress={({ item }) => push(`/admin/classes/${item.class}`)}
+            onRowPress={({ item }) => push(`/admin/classes/${item.id}`)}
             renderItem={({ item }) => (
               <>
-                <TableDataItem>{item.class}</TableDataItem>
-                <TableDataItem>{item.department}</TableDataItem>
-                <TableDataItem>{item.level}</TableDataItem>
-                <TableDataItem>{item.student}</TableDataItem>
-                <TableDataItem>{item.created}</TableDataItem>
+                <TableDataItem>{item.className}</TableDataItem>
+                <TableDataItem>
+                  {item.teacher.firstname + " " + item.teacher.lastname}
+                </TableDataItem>
+                <TableDataItem>{item.courses.length}</TableDataItem>
+                <TableDataItem>{formatDate(item.createdAt)}</TableDataItem>
               </>
             )}
           />

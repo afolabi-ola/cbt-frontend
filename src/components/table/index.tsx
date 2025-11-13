@@ -61,41 +61,40 @@ const AppTable = <T,>({
         </thead>
 
         <tbody className="bg-grey-30">
-          {isLoading ? (
-            <SpinnerMini />
-          ) : (
-            data?.map((item, itemIndex) => {
-              const hasRowPress = !!onRowPress;
+          {data?.map((item, itemIndex) => {
+            const hasRowPress = !!onRowPress;
 
-              return (
-                <tr
-                  key={itemKey({ item, itemIndex }) ?? itemIndex}
-                  onClick={() =>
-                    hasRowPress ? onRowPress({ item, itemIndex }) : null
-                  }
-                  className={`${
-                    hasRowPress
-                      ? "cursor-pointer hover:bg-neutral-400"
-                      : "cursor-default bg-transparent"
-                  }`}
-                >
-                  {renderItem({ item, itemIndex })}
-                </tr>
-              );
-            })
-          )}
+            return (
+              <tr
+                key={itemKey({ item, itemIndex }) ?? itemIndex}
+                onClick={() =>
+                  hasRowPress ? onRowPress({ item, itemIndex }) : null
+                }
+                className={`${
+                  hasRowPress
+                    ? "cursor-pointer hover:bg-neutral-400"
+                    : "cursor-default bg-transparent"
+                }`}
+              >
+                {renderItem({ item, itemIndex })}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 
-      {/* when data isn't available */}
-      {!data.length && (
-        <span
-          className={`${
-            centralizeLabel ? "text-center" : "text-left"
-          } text-sm font-bold`}
-        >
-          No available data
-        </span>
+      {isLoading ? (
+        <SpinnerMini color="#0c4a6e" />
+      ) : (
+        !data.length && (
+          <span
+            className={`${
+              centralizeLabel ? "text-center" : "text-left"
+            } text-sm font-bold`}
+          >
+            No available data
+          </span>
+        )
       )}
     </div>
   );
