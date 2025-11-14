@@ -56,3 +56,8 @@ export interface StudentResultCoursesResponse {
   courses: CourseResults[];
   overallStats: OverallStats;
 }
+export interface StudentResultDownloadResponse {
+  success: boolean;
+  message: string;
+  details: string | null;
+}
