@@ -1,5 +1,7 @@
 import ActivitiesSection from '@/features/dashboard/components/ActivitiesSection';
 import React, { useEffect, useState } from 'react';
+import useDownloadResult from '../hook/useDownloadResult';
+import { Button, SpinnerMini } from '@/components/ui';
 
 interface PerformanceSummaryProps {
   averageScore: number;
@@ -14,6 +16,8 @@ const PerformanceSummary: React.FC<PerformanceSummaryProps> = ({
   totalTests,
   //   recentActivity,
 }) => {
+  const { mutate: downloadResult, isPending: isDownloadingResults } =
+    useDownloadResult();
   const [animatedScore, setAnimatedScore] = useState(0);
 
   useEffect(() => {
@@ -24,6 +28,10 @@ const PerformanceSummary: React.FC<PerformanceSummaryProps> = ({
 
     return () => clearTimeout(timer);
   }, [averageScore]);
+
+  const handleDownloadResult = function () {
+    downloadResult();
+  };
 
   return (
     <aside className='bg-white rounded-lg shadow p-6 w-full max-w-xs'>
@@ -66,16 +74,16 @@ const PerformanceSummary: React.FC<PerformanceSummaryProps> = ({
           <span>{totalTests}</span>
         </div>
       </div>
-      <button className='bg-primary-600 text-white w-full py-2 rounded mb-4'>
-        Download Report
-      </button>
+      <Button onClick={handleDownloadResult} disabled={isDownloadingResults}>
+        {isDownloadingResults ? (
+          <>
+            Downloading <SpinnerMini />
+          </>
+        ) : (
+          'Download Report'
+        )}
+      </Button>
       <div>
-        {/* <div className='font-semibold mb-2 text-sm'>Recent Activity</div>
-      <ul className='list-disc pl-5 text-sm text-gray-700'>
-        {recentActivity.map((activity, idx) => (
-          <li key={idx}>{activity}</li>
-        ))}
-      </ul> */}
         <ActivitiesSection />
       </div>
     </aside>
