@@ -103,6 +103,17 @@ export interface DashboardData {
   inProgressTests: number;
   totalScore: TotalScore;
   notifications?: Notification[];
+
+  // for admins
+  classCount: number;
+  courseCount: number;
+  studentCount: number;
+  teacherCount: number;
+  testCount: number;
+  adminName: {
+    firstname: string;
+    lastname: string;
+  };
 }
 
 export interface DashboardResponse {
@@ -131,7 +142,7 @@ export interface AllClassesResponse {
   courses: Courses[];
 }
 
-export interface AllTeachersEndpoint {
+export interface AllTeachersResponse {
   firstname: string;
   id: number;
   lastname: string;

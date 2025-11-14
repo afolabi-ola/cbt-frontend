@@ -5,3 +5,7 @@ export const formatDate = (date: string) => {
 
   return formatted;
 };
+
+export const formatDigits = (digit: number) => {
+  return digit.toLocaleString();
+};

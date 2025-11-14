@@ -1,5 +1,9 @@
 import api from "@/lib/axios";
-import { AllClassesResponse, DashboardResponse } from "@/types/dashboard.types";
+import {
+  AllClassesResponse,
+  AllTeachersResponse,
+  DashboardResponse,
+} from "@/types/dashboard.types";
 
 export const dashboardServices = {
   // you don't need to statically include withCredentials. its already part of the axios api config
@@ -13,7 +17,7 @@ export const dashboardServices = {
     return response.data;
   },
 
-  getAllTeacher: async () => {
+  getAllTeacher: async (): Promise<AllTeachersResponse[]> => {
     const response = await api.get("/teachers");
     return response.data.data;
   },

@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
+import { ReactNode, TdHTMLAttributes } from "react";
 import SpinnerMini from "../ui/SpinnerMini";
 
-interface TableDataItemProps {
+interface TableDataItemProps extends TdHTMLAttributes<HTMLTableCellElement> {
   children: ReactNode;
 }
 
@@ -38,7 +38,7 @@ const AppTable = <T,>({
   if (!data) return null;
 
   return (
-    <div className="flex flex-col gap-1 overflow-x-auto w-full">
+    <div className="flex flex-col overflow-x-auto w-full">
       {label && (
         <span
           className={`${
