@@ -1,3 +1,5 @@
+'use client';
+
 import { authService } from '@/services/authService';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
