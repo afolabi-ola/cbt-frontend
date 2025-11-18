@@ -29,3 +29,21 @@ export const useGetTeachers = () => {
 
   return queryResponse;
 };
+
+export const useGetCourses = () => {
+  const queryResponse = useQuery({
+    queryFn: dashboardServices.getAllCourses,
+    queryKey: ['courses'],
+  });
+
+  return queryResponse;
+};
+
+export const useGetQuestionBank = () => {
+  const queryResponse = useQuery({
+    queryFn: dashboardServices.getAllQuestionBank,
+    queryKey: ['questionBanks'],
+  });
+
+  return queryResponse;
+};
