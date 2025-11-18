@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { QueryProvider } from '@/providers/query-provider';
-import { ToastProvider } from '@/providers/toast-provider';
-import { SocketProvider } from '@/context/SocketContext';
-import { TestAttemptProvider } from '@/features/tests/context/TestAttemptContext';
-import { TestResultProvider } from '@/features/tests/context/TestResultContext';
-import { TestProvider } from '@/context/TestContext';
+// Client providers are mounted where needed (e.g. student layout)
 
 const inter = Inter({
   subsets: ['latin'],
@@ -25,18 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={`${inter.variable} antialiased`}>
-        <QueryProvider>
-          <SocketProvider>
-            <TestProvider>
-              <TestAttemptProvider>
-                <TestResultProvider>{children}</TestResultProvider>
-              </TestAttemptProvider>
-            </TestProvider>
-            <ToastProvider />
-          </SocketProvider>
-        </QueryProvider>
-      </body>
+      <body className={`${inter.variable} antialiased`}>{children}</body>
     </html>
   );
 }

@@ -1,8 +1,8 @@
 'use client';
 
-import { TestProvider } from '@/context/TestContext';
+import ClientProviders from '@/components/ClientProviders';
 import '@/app/globals.css'; // ensure global styles still apply
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <TestProvider>{children}</TestProvider>;
+  return <ClientProviders>{children}</ClientProviders>;
 }
