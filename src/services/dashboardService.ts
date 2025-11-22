@@ -39,4 +39,21 @@ export const dashboardServices = {
     const response = await api.get(`/question-banks/${bankId}/questions`);
     return response.data.data;
   },
+
+  deleteQuestion: async (questionId: string) => {
+    const response = await api.delete(`/question/${questionId}`);
+    return response.data.data;
+  },
+
+  getQuestionsTemplate: () => "/question/upload/template",
+
+  uploadQuestions: async (formData: FormData) => {
+    const response = await api.post("/question/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data;
+  },
 };

@@ -365,7 +365,7 @@ const AdminClasses = () => {
               <>
                 <TableDataItem>{item.className}</TableDataItem>
                 <TableDataItem>
-                  {item.teacher.firstname + " " + item.teacher.lastname}
+                  {item?.teacher?.firstname + " " + item?.teacher?.lastname}
                 </TableDataItem>
                 <TableDataItem>{item.courses.length}</TableDataItem>
                 <TableDataItem>{formatDate(item.createdAt)}</TableDataItem>

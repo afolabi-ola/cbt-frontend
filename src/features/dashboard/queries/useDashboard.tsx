@@ -52,6 +52,7 @@ export const useGetQuestionsInBank = (bankId: string) => {
   const queryResponse = useQuery({
     queryFn: () => dashboardServices.getQuestionsInBank(bankId),
     queryKey: ["questionBanks", bankId],
+    enabled: !!bankId
   });
 
   return queryResponse;
