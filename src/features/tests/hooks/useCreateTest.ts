@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { CreateTestRequest, CreateTestResponse } from '@/types/tests.types';
 import { AppError } from '@/types/errors.types';
+import getErrorDetails from '@/utils/getErrorDetails';
 
 export default function useCreateTest() {
   const queryClient = useQueryClient();
@@ -17,7 +18,8 @@ export default function useCreateTest() {
         queryClient.invalidateQueries({ queryKey: ['tests'] });
       },
       onError: (err: AppError) => {
-        toast.error(err.details);
+        const message = getErrorDetails(err);
+        toast.error(message);
       },
     },
   );

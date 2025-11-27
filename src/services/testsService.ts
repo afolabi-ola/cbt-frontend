@@ -38,6 +38,17 @@ export const testsServices = {
     const response = await axios.post('/tests', data);
     return response.data;
   },
+  updateTest: async (
+    testId: number | string,
+    data: CreateTestRequest,
+  ): Promise<CreateTestResponse> => {
+    const response = await axios.patch(`/tests/${testId}`, data);
+    return response.data;
+  },
+  deleteTest: async (testId: number | string) => {
+    const response = await axios.delete(`/tests/${testId}`);
+    return response.data;
+  },
 };
 
 export const startTestSession = async ({
