@@ -3,7 +3,7 @@
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/input";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { SubmitHandler, useForm, Resolver } from 'react-hook-form';
+import { SubmitHandler, useForm, Resolver, Controller } from 'react-hook-form';
 import * as Yup from 'yup';
 import { useRef } from 'react';
 import {
@@ -29,7 +29,7 @@ type FormProps = Yup.InferType<typeof schema>;
 
 export default function AdminSettingsPage() {
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors },
     reset,
@@ -154,44 +154,70 @@ export default function AdminSettingsPage() {
         onSubmit={handleSubmit(updateSettings)}
         className='flex flex-col gap-3 w-full'
       >
-        <Input
-          label='App Name'
-          hookFormRegister={register}
+        <Controller
+          control={control}
           name='appName'
-          errorText={
-            (errors.appName && (errors?.appName.message as string)) || undefined
-          }
+          defaultValue={''}
+          render={({ field }) => (
+            <Input
+              label='App Name'
+              {...field}
+              errorText={
+                (errors.appName && (errors?.appName.message as string)) ||
+                undefined
+              }
+            />
+          )}
         />
 
-        <Input
-          label='Institution Name'
-          hookFormRegister={register}
+        <Controller
+          control={control}
           name='institutionName'
-          errorText={
-            (errors.institutionName &&
-              (errors?.institutionName.message as string)) ||
-            undefined
-          }
+          defaultValue={''}
+          render={({ field }) => (
+            <Input
+              label='Institution Name'
+              {...field}
+              errorText={
+                (errors.institutionName &&
+                  (errors?.institutionName.message as string)) ||
+                undefined
+              }
+            />
+          )}
         />
 
-        <Input
-          label='Short Name'
-          hookFormRegister={register}
+        <Controller
+          control={control}
           name='shortName'
-          errorText={
-            (errors.shortName && (errors?.shortName.message as string)) ||
-            undefined
-          }
+          defaultValue={''}
+          render={({ field }) => (
+            <Input
+              label='Short Name'
+              {...field}
+              errorText={
+                (errors.shortName && (errors?.shortName.message as string)) ||
+                undefined
+              }
+            />
+          )}
         />
 
-        <Input
-          label='Support Email'
-          hookFormRegister={register}
+        <Controller
+          control={control}
           name='supportEmail'
-          errorText={
-            (errors.supportEmail && (errors?.supportEmail.message as string)) ||
-            undefined
-          }
+          defaultValue={''}
+          render={({ field }) => (
+            <Input
+              label='Support Email'
+              {...field}
+              errorText={
+                (errors.supportEmail &&
+                  (errors?.supportEmail.message as string)) ||
+                undefined
+              }
+            />
+          )}
         />
 
         {/* Logo & Favicon uploads */}
@@ -309,11 +335,18 @@ export default function AdminSettingsPage() {
           <div className='flex flex-col'>
             <label className='text-sm text-neutral-700'>Primary Color</label>
             <div className='border border-neutral-300 rounded'>
-              <input
-                aria-label='primary-color'
-                type='color'
-                {...register('primaryColor')}
-                className='h-10 w-20 mt-1 cursor-pointer'
+              <Controller
+                control={control}
+                name='primaryColor'
+                defaultValue={'#2563eb'}
+                render={({ field }) => (
+                  <input
+                    aria-label='primary-color'
+                    type='color'
+                    {...field}
+                    className='h-10 w-20 mt-1 cursor-pointer'
+                  />
+                )}
               />
             </div>
           </div>
@@ -322,20 +355,36 @@ export default function AdminSettingsPage() {
             <label className='text-sm text-neutral-700'>System Status</label>
             <div className='flex gap-3 h-12 items-center border border-neutral-300 rounded px-2 py-4'>
               <label className='flex items-center gap-1'>
-                <input
-                  aria-label='status-active'
-                  type='radio'
-                  value='active'
-                  {...register('systemStatus')}
+                <Controller
+                  control={control}
+                  name='systemStatus'
+                  defaultValue={'active'}
+                  render={({ field }) => (
+                    <input
+                      aria-label='status-active'
+                      type='radio'
+                      value='active'
+                      checked={field.value === 'active'}
+                      onChange={() => field.onChange('active')}
+                    />
+                  )}
                 />
                 <span className='text-sm'>Active</span>
               </label>
               <label className='flex items-center gap-1'>
-                <input
-                  aria-label='status-maintenance'
-                  type='radio'
-                  value='maintenance'
-                  {...register('systemStatus')}
+                <Controller
+                  control={control}
+                  name='systemStatus'
+                  defaultValue={'active'}
+                  render={({ field }) => (
+                    <input
+                      aria-label='status-maintenance'
+                      type='radio'
+                      value='maintenance'
+                      checked={field.value === 'maintenance'}
+                      onChange={() => field.onChange('maintenance')}
+                    />
+                  )}
                 />
                 <span className='text-sm'>Maintenance</span>
               </label>
