@@ -1,5 +1,4 @@
 import Card from '@/components/ui/Card';
-import Badge from '@/components/ui/Badge';
 import { AcademicInformation } from '@/types/profile.types';
 import RegisteredCoursesSection from '@/features/tests/components/RegisteredCoursesSection';
 
