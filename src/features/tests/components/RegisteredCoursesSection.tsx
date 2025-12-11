@@ -16,7 +16,7 @@ export default function RegisteredCoursesSection() {
   const hasCourses = courses.length > 0;
 
   return (
-    <section className='p-6 bg-white rounded-xl shadow-sm border border-gray-100 space-y-4'>
+    <section className='p-6 bg-white rounded-xl shadow-sm border border-gray-100 space-y-4 max-h-[45vh] h-full overflow-y-auto'>
       <label className='block text-sm font-medium text-neutral-700 mb-2'>
         Registered Courses
       </label>
