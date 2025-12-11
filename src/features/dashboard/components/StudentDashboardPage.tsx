@@ -94,7 +94,7 @@ export default function StudentDashboardPage() {
     <div className='grid grid-cols-1 md:flex gap-6'>
       <div className='space-y-8 flex-1 gap-8 flex flex-col'>
         {/* Student Info and welcome */}
-        <div className='space-y-2 flex justify-between h-6'>
+        <div className='space-y-2 flex justify-between h-6 mb-4'>
           <div className='space-y-2'>
             <h1 className='text-3xl font-semibold'>
               Welcome back, <span className='capitalize'>{studentName}</span> 👋
@@ -109,7 +109,7 @@ export default function StudentDashboardPage() {
           </div>
         </div>
 
-        <div className='space-y-4'>
+        <div className='space-y-4 mt-10 lg:mt-0'>
           <h1 className='text-2xl'>Active Tests</h1>
           {hasActiveTests ? (
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4'>
@@ -156,7 +156,7 @@ export default function StudentDashboardPage() {
 
       {/* Notifications and calender */}
 
-      <div className='w-68 space-y-6 border-neutral-200 pl-2 md:border-l'>
+      <div className='w-full md:w-68 space-y-6 border-neutral-200 pl-2 md:border-l'>
         {/* Notification */}
         <div className='space-y-2'>
           <h1 className='text-2xl'>Notifications</h1>

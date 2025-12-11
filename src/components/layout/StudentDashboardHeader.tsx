@@ -74,7 +74,7 @@ export default function StudentDashboardHeader() {
             </ButtonIcon>
             {notificationData?.data?.data.length &&
               notificationData.data.data.length > 0 && (
-                <span className='text-xs border border-white bg-white text-primary-500 font-black rounded-full w-4 h-4 absolute flex justify-center items-center  -top-2 -right-2'>
+                <span className='text-xs border border-white bg-white text-primary-500 font-black rounded-full w-4 h-4 absolute flex justify-center items-center  -top-2 -right-2 p-2'>
                   {notificationData?.data.data.length || 0}
                 </span>
               )}
@@ -139,16 +139,22 @@ export default function StudentDashboardHeader() {
           {/* Mobile Bottom Section */}
           <div className='border-t border-primary-100 px-6 py-4 flex items-center justify-between sm:hidden'>
             <div className='flex gap-4 items-center'>
-              <ButtonIcon
-                onClick={() => {
-                  toast('Notifications');
-                  closeMobileMenu();
-                }}
-                ariaLabel='Notifications'
-              >
-                <IoIosNotifications size={24} />
-              </ButtonIcon>
-              <ThemeToggle />
+              <div className='relative'>
+                <ButtonIcon
+                  onClick={() => toast('Notifications')}
+                  ariaLabel='Notifications'
+                  // className='hidden sm:flex'
+                >
+                  <IoIosNotifications size={24} />
+                </ButtonIcon>
+                {notificationData?.data?.data.length &&
+                  notificationData.data.data.length > 0 && (
+                    <span className='text-xs border border-white bg-white text-primary-500 font-black rounded-full w-4 h-4 absolute flex justify-center items-center  -top-2 -right-2 p-2'>
+                      {notificationData?.data.data.length || 0}
+                    </span>
+                  )}
+              </div>
+              {/* <ThemeToggle /> */}
               <ButtonIcon
                 onClick={logout}
                 disabled={isLoggingOut}
