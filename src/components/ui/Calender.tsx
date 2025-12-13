@@ -178,10 +178,6 @@ export default function Calendar() {
           },
         }}
       />
-
-      <div>
-        <p className='text-xs mt-2'>Next Test: Web Development - in 12 days</p>
-      </div>
     </div>
   );
 }
