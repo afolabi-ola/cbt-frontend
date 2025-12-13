@@ -179,9 +179,9 @@ export default function Calendar() {
         }}
       />
 
-      <div>
+    /*  <div>
         <p className='text-xs mt-2'>Next Test: Web Development - in 12 days</p>
-      </div>
+      </div>*/
     </div>
   );
 }
