@@ -42,7 +42,7 @@ export const resultsServices = {
 
     const link = document.createElement('a');
     link.href = downloadUrl;
-    link.download = `student-results.${format}`;
+    //link.download = `student-results.${format}`;
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -66,7 +66,7 @@ export const resultsServices = {
 
     const link = document.createElement('a');
     link.href = downloadUrl;
-    link.download = `results.${format}`;
+    //link.download = `results.${format}`;
     document.body.appendChild(link);
     link.click();
     link.remove();
