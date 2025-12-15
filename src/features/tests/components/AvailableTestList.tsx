@@ -41,7 +41,7 @@ export default function AvailableTestList({ tests = [] }: AvailableTestListProps
   const hasTests = tests.length > 0;
 
   return (
-    <div className='space-y-8 w-2xl'>
+    <div className='space-y-8 w-full lg:w-2xl'>
       {/* 🔍 Search + Filter */}
       <div className='flex flex-col sm:flex-row items-center gap-4'>
         <div className='flex w-full border rounded-lg overflow-hidden shadow-sm border-neutral-200'>
