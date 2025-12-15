@@ -489,7 +489,6 @@ export default function AdminResultPage() {
             {stats.avg.toLocaleString('en-US', {
               maximumFractionDigits: 5,
             })}
-            %
           </div>
         </div>
 
@@ -500,7 +499,7 @@ export default function AdminResultPage() {
 
         <div className='bg-white rounded p-4 shadow-sm text-center'>
           <div className='text-sm text-neutral-500'>Lowest Score</div>
-          <div className='text-2xl font-bold'>{stats.lowest}%</div>
+          <div className='text-2xl font-bold'>{stats.lowest}</div>
         </div>
 
         <div className='bg-white rounded p-4 shadow-sm text-center'>

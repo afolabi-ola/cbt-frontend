@@ -23,11 +23,11 @@ const PerformanceSummary: React.FC<PerformanceSummaryProps> = ({
   useEffect(() => {
     // Trigger animation when averageScore changes
     const timer = setTimeout(() => {
-      setAnimatedScore(averageScore);
+      setAnimatedScore(passRate);
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [averageScore]);
+  }, [passRate]);
 
   return (
     <aside className='bg-white rounded-lg shadow p-6 w-full lg:max-w-xs'>
@@ -83,19 +83,19 @@ const PerformanceSummary: React.FC<PerformanceSummaryProps> = ({
           })()}
           <span
             className={`absolute inset-0 flex items-center justify-center text-xl font-bold ${
-              averageScore === 100
+              passRate === 100
                 ? 'text-green-600'
-                : averageScore < 30
+                : passRate < 30
                 ? 'text-red-600'
                 : 'text-primary-600'
             }`}
           >
-            {averageScore}%
+            {passRate}%
           </span>
         </div>
         <div>
           <div className='text-sm text-gray-500'>Average score</div>
-          <div className='text-lg font-semibold'>{averageScore}%</div>
+          <div className='text-lg font-semibold'>{averageScore}</div>
         </div>
       </div>
       <div className='mb-4'>

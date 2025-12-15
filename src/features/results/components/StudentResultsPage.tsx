@@ -210,13 +210,19 @@ const StudentResultsPage: React.FC = () => {
             0,
           );
           const passRate = total ? Math.round((passed / total) * 100) : 0;
-          const avgPercent = Math.min(
-            100,
-            Math.round((effectiveOverallStats?.averageScore ?? 0) * 10),
-          );
+          // const avgPercent = Math.min(
+          //   100,
+          //   Math.round((effectiveOverallStats?.averageScore ?? 0) * 10),
+          // );
+          const avgPercent = (
+            effectiveOverallStats?.averageScore ?? 0
+          ).toLocaleString('en-US', {
+            maximumFractionDigits: 1,
+          });
+
           return (
             <PerformanceSummary
-              averageScore={avgPercent}
+              averageScore={Number(avgPercent)}
               passRate={passRate}
               totalTests={total}
               downloadParams={params}

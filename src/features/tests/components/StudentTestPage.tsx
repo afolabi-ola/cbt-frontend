@@ -72,12 +72,12 @@ export default function StudentTestPage() {
   // Filter fields configuration
   const filterFields = useMemo<ResultFilterField[]>(
     () => [
-      {
-        label: 'Search',
-        type: 'search',
-        name: 'search',
-        placeholder: 'Search by test title',
-      },
+      // {
+      //   label: 'Search',
+      //   type: 'search',
+      //   name: 'search',
+      //   placeholder: 'Search by test title',
+      // },
       {
         type: 'select',
         name: 'courseTitle',
@@ -98,17 +98,17 @@ export default function StudentTestPage() {
         ],
         placeholder: 'All types',
       },
-      {
-        type: 'select',
-        name: 'testState',
-        label: 'Status',
-        options: [
-          { label: 'Active', value: 'active' },
-          { label: 'Scheduled', value: 'scheduled' },
-          { label: 'Completed', value: 'completed' },
-        ],
-        placeholder: 'All statuses',
-      },
+      // {
+      //   type: 'select',
+      //   name: 'testState',
+      //   label: 'Status',
+      //   options: [
+      //     { label: 'Active', value: 'active' },
+      //     { label: 'Scheduled', value: 'scheduled' },
+      //     { label: 'Completed', value: 'completed' },
+      //   ],
+      //   placeholder: 'All statuses',
+      // },
       {
         type: 'select',
         name: 'sort',
@@ -269,7 +269,7 @@ export default function StudentTestPage() {
 
       {/* Registered courses and calender */}
 
-      <div className='w-68 space-y-6 border-neutral-200 pl-2 md:border-l'>
+      <div className='w-full lg:w-68 flex justify-center items-center flex-col md:block space-y-6 border-neutral-200 pl-2 md:border-l'>
         {/* Registered courses */}
         <div className='space-y-2'>
           <h1 className='text-2xl'>Registered Courses</h1>
