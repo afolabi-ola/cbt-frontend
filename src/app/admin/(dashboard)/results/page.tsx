@@ -258,7 +258,6 @@ export default function AdminResultPage() {
     //   .filter((s): s is number => s !== null);
     const avg = resp?.data.overallStats.averageScore ?? 0;
     const lowest = resp?.data.overallStats.lowestScore ?? 0;
-    // console.log({ scores });
 
     const highest = resp?.data.overallStats.highestScore ?? 0;
     // const lowest = scores.length ? Math.min(...scores) : 0;

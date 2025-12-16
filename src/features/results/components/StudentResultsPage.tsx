@@ -17,17 +17,15 @@ const StudentResultsPage: React.FC = () => {
     defaultSortOrder: undefined,
   });
 
-  const {
-    courses,
-    overallStats,
-    student,
-    pagination,
-    isLoading: loadingCourses,
-  } = useResultCourses(params);
+  const { data, isLoading: loadingCourses } = useResultCourses(params);
+
+  const student = data?.student;
+  const pagination = data?.pagination;
+  const overallStats = data?.overallStats;
 
   const { data: allCoursesData } = useGetCourses();
 
-  const effectiveCourses = courses;
+  const effectiveResults = useMemo(() => data?.results ?? [], [data?.results]);
   const allCourses = useMemo(
     () => allCoursesData?.data || [],
     [allCoursesData],
@@ -77,21 +75,43 @@ const StudentResultsPage: React.FC = () => {
         name: 'endDate',
         label: 'End Date',
       },
+      {
+        type: 'select',
+        name: 'sort',
+        label: 'Sort By',
+        options: [
+          { label: 'Score', value: 'score' },
+          { label: 'Course', value: 'course' },
+          { label: 'Date', value: 'date' },
+        ],
+        placeholder: 'Sort By',
+      },
+      {
+        type: 'select',
+        name: 'order',
+        label: 'Order By',
+        options: [
+          { label: 'Desc', value: 'desc' },
+          { label: 'Asc', value: 'asc' },
+        ],
+        placeholder: 'Order By',
+      },
     ],
     [courseOptions, loadingCourses],
   );
 
-  const sortOptions = useMemo(
-    () => [
-      // { label: 'Date (Ended)', value: 'endedAt' },
-      // { label: 'Date (Started)', value: 'startedAt' },
+  // const sortOptions = useMemo(
+  //   () => [
+  //     // { label: 'Date (Ended)', value: 'endedAt' },
+  //     // { label: 'Date (Started)', value: 'startedAt' },
 
-      { label: 'Sort', value: '' },
-      { label: 'Score', value: 'score' },
-      { label: 'Course', value: 'course' },
-    ],
-    [],
-  );
+  //     { label: 'Sort', value: '' },
+  //     { label: 'Score', value: 'score' },
+  //     { label: 'Course', value: 'course' },
+  //     { label: 'Date', value: 'date' },
+  //   ],
+  //   [],
+  // );
 
   const handleFilterChange = useCallback(
     (nextParams: Record<string, string | number | undefined>) => {
@@ -100,28 +120,23 @@ const StudentResultsPage: React.FC = () => {
     [updateParams],
   );
 
-  // Flatten tests across courses based on filters
+  // Map API results into table rows
   const filteredResults: TestResult[] = useMemo(() => {
-    const tests: TestResult[] = [];
-    effectiveCourses.forEach((c) => {
-      c.tests.forEach((t) => {
-        const dateObj = new Date(t.session.endedAt || t.session.startedAt);
-        const dateStr = `${dateObj.toLocaleString('default', {
-          month: 'short',
-        })} ${dateObj.getDate().toString().padStart(2, '0')}`; // stable formatting to reduce hydration mismatch risk
-        tests.push({
-          course: c.course.title,
-          title: t.title,
-          type: t.type,
-          date: dateStr,
-          score: t.session.score,
-          status: t.session.status,
-        });
-      });
+    return effectiveResults.map((r) => {
+      const dateObj = new Date(r.session.endedAt || r.session.startedAt);
+      const dateStr = `${dateObj.toLocaleString('default', {
+        month: 'short',
+      })} ${dateObj.getDate().toString().padStart(2, '0')}`; // stable formatting
+      return {
+        course: r.course.title,
+        title: r.test.title,
+        type: r.test.type,
+        date: dateStr,
+        score: r.session.score,
+        status: r.session.status,
+      } as TestResult;
     });
-    // Sort by endedAt desc using actual date objects for stability
-    return tests;
-  }, [effectiveCourses]);
+  }, [effectiveResults]);
 
   return (
     <div className='min-h-screen bg-gray-50 py-8 px-4 md:px-12'>
@@ -149,8 +164,8 @@ const StudentResultsPage: React.FC = () => {
               fields={filterFields}
               limit={params.limit}
               limitOptions={[5, 10, 20, 30, 40]}
-              sort={params.sort ? String(params.sort) : undefined}
-              sortOptions={sortOptions}
+              // sort={params.sort ? String(params.sort) : undefined}
+              // sortOptions={sortOptions}
               initialValues={params}
               onChange={handleFilterChange}
               onLimitChange={setLimit}
@@ -158,8 +173,9 @@ const StudentResultsPage: React.FC = () => {
               onReset={() =>
                 updateParams({
                   page: 1,
-                  limit: params.limit,
+                  limit: undefined,
                   sort: undefined,
+                  order: undefined,
                 })
               }
             />
@@ -170,20 +186,20 @@ const StudentResultsPage: React.FC = () => {
             ) : (
               <>
                 <ResultsTable results={filteredResults} />
-                {effectiveCourses.length > 0 &&
+                {effectiveResults.length > 0 &&
                   filteredResults.length === 0 && (
                     <p className='text-sm text-gray-500 px-2'>
                       No tests found for current filters.
                     </p>
                   )}
-                {effectiveCourses.length === 0 && (
+                {effectiveResults.length === 0 && (
                   <p className='text-sm text-gray-500 px-2'>
                     No test results available yet.
                   </p>
                 )}
 
                 {/* Pagination */}
-                {effectiveCourses.length > 0 && pagination && (
+                {effectiveResults.length > 0 && pagination && (
                   <div className='pt-4 border-t'>
                     <Pagination
                       page={params.page || 1}
@@ -199,30 +215,18 @@ const StudentResultsPage: React.FC = () => {
         </div>
         {(() => {
           const total =
-            effectiveOverallStats?.totalTests ??
-            effectiveCourses.reduce((s, c) => s + c.tests.length, 0);
-          const passed = effectiveCourses.reduce(
-            (s, c) =>
-              s +
-              c.tests.filter(
-                (t) => t.session.status?.toUpperCase() === 'PASSED',
-              ).length,
-            0,
-          );
+            effectiveOverallStats?.totalTests ?? effectiveResults.length;
+          const passed = effectiveResults.filter(
+            (r) => r.session.status?.toUpperCase() === 'PASSED',
+          ).length;
           const passRate = total ? Math.round((passed / total) * 100) : 0;
-          // const avgPercent = Math.min(
-          //   100,
-          //   Math.round((effectiveOverallStats?.averageScore ?? 0) * 10),
-          // );
-          const avgPercent = (
-            effectiveOverallStats?.averageScore ?? 0
-          ).toLocaleString('en-US', {
-            maximumFractionDigits: 1,
-          });
+          const avgRaw = effectiveOverallStats?.averageScore ?? 0;
+          const avgNumber =
+            typeof avgRaw === 'string' ? parseFloat(avgRaw) : Number(avgRaw);
 
           return (
             <PerformanceSummary
-              averageScore={Number(avgPercent)}
+              averageScore={Number.isFinite(avgNumber) ? avgNumber : 0}
               passRate={passRate}
               totalTests={total}
               downloadParams={params}
