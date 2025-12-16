@@ -295,7 +295,7 @@ export default function AdminResultPage() {
         initialValues={params}
         onChange={handleFilterChange}
         onLimitChange={setLimit}
-        onReset={() => updateParams({ page: 1, limit: params.limit })}
+        onReset={() => updateParams({ page: 1, limit: undefined })}
       />
       <div className='bg-white rounded shadow-sm p-4'>
         {/* Server pagination using data.pagination from response */}
