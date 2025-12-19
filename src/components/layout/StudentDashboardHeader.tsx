@@ -66,7 +66,7 @@ export default function StudentDashboardHeader() {
         <div className='flex gap-2 sm:gap-4 items-center text-primary-900'>
           <div className='relative'>
             <ButtonIcon
-              onClick={() => toast('Notifications')}
+              // onClick={() => toast('Notifications')}
               ariaLabel='Notifications'
               // className='hidden sm:flex'
             >

@@ -8,6 +8,7 @@ import DashboardTestCard from '@/features/dashboard/components/DashboardTestCard
 import useDashboard from '../queries/useDashboard';
 import Link from 'next/link';
 import { useSystemSettingsStore } from '@/store/useSystemSettingsStore';
+import getErrorDetails from '@/utils/getErrorDetails';
 
 export default function StudentDashboardPage() {
   const {
@@ -59,7 +60,7 @@ export default function StudentDashboardPage() {
             Failed to load dashboard
           </h3>
           <p className='text-neutral-600'>
-            {dashboardDataError?.details || 'Something went wrong'}
+            {getErrorDetails(dashboardDataError) || 'Something went wrong'}
           </p>
           <button
             onClick={() => window.location.reload()}

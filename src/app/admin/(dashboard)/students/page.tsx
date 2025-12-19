@@ -50,13 +50,15 @@ export default function AdminStudentsPage() {
   );
 
   const classes = useMemo(() => {
-    const arr = allClasses?.data?.flatMap((c) => c.className);
+    const arr = (allClasses?.data || []).flatMap((c) => c.className);
     return Array.from(new Set(arr)).filter((v): v is string => !!v);
   }, [allClasses]);
 
   const courses = useMemo(() => {
     const arr = students.flatMap((s) =>
-      s.class.courses.map((c) => c.title).filter((v): v is string => !!v),
+      (s?.class?.courses || [])
+        .map((c) => c.title)
+        .filter((v): v is string => !!v),
     );
     return Array.from(new Set(arr));
   }, [students]);
@@ -234,7 +236,7 @@ export default function AdminStudentsPage() {
                     <TableDataItem>{item.email ?? 'N/A'}</TableDataItem>
                     <TableDataItem>{item.phoneNumber ?? 'N/A'}</TableDataItem>
                     <TableDataItem>
-                      {item.class?.className ?? 'N/A'}
+                      {item.class?.className ?? 'Unassigned'}
                     </TableDataItem>
 
                     <TableDataItem>
@@ -344,14 +346,18 @@ export default function AdminStudentsPage() {
       >
         {modalState.type === 'view' ? (
           <div className='grid grid-cols-4 gap-4'>
-            {modalState.modalContent?.class.courses.map((c) => (
-              <Badge key={c.id}>
-                <span className='block text-center'>
-                  <span className='block font-black'>{c.title}</span>
-                  <span className='block text-xs'>{c.description}</span>
-                </span>
-              </Badge>
-            ))}
+            {(modalState.modalContent?.class?.courses?.length || 0) > 0 ? (
+              modalState.modalContent?.class?.courses.map((c) => (
+                <Badge key={c.id}>
+                  <span className='block text-center'>
+                    <span className='block font-black'>{c.title}</span>
+                    <span className='block text-xs'>{c.description}</span>
+                  </span>
+                </Badge>
+              ))
+            ) : (
+              <span>Unassigned</span>
+            )}
           </div>
         ) : modalState.type === 'create' ? (
           <AddStudentForm
