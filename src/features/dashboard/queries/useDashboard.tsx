@@ -139,7 +139,7 @@ export const useCreateComprehension = (bankId: string | number) => {
       dashboardServices.createQuestionBankComprehension(bankId, payload),
     mutationKey: ['questionBankComprehensions', 'create', bankId],
     onSuccess: (res) => {
-      toast.success(res.message || 'Comprehension created');
+      toast.success(res.message || 'Instructions created');
     },
     onError: (err) => {
       const msg = getErrorDetails(err);
@@ -164,7 +164,7 @@ export const useUpdateComprehension = () => {
       ),
     mutationKey: ['questionBankComprehensions', 'update'],
     onSuccess: (res) => {
-      toast.success(res.message || 'Comprehension updated');
+      toast.success(res.message || 'Instructions updated');
     },
     onError: (err) => {
       const msg = getErrorDetails(err);
@@ -179,7 +179,7 @@ export const useDeleteComprehension = () => {
       dashboardServices.deleteQuestionBankComprehension(comprehensionId),
     mutationKey: ['questionBankComprehensions', 'delete'],
     onSuccess: (res) => {
-      toast.success(res.message || 'Comprehension deleted');
+      toast.success(res.message || 'Instructions deleted');
     },
     onError: (err) => {
       const msg = getErrorDetails(err);

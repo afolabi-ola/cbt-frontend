@@ -165,7 +165,7 @@ const CreateQuestion = ({
     }
     toast.success(
       `${
-        resource.type === 'diagram' ? 'Diagram' : 'Comprehension passage'
+        resource.type === 'diagram' ? 'Diagram' : 'Instructions'
       } attached successfully`,
     );
   };
@@ -277,7 +277,7 @@ const CreateQuestion = ({
                 <div className='flex-1'>
                   <div className='flex items-center gap-2 mb-1'>
                     <span className='text-sm font-medium text-primary-700'>
-                      📖 Comprehension:
+                      📖 Instructions:
                     </span>
                     <span className='text-sm text-primary-600'>
                       {selectedResources.comprehension.title}
@@ -291,7 +291,7 @@ const CreateQuestion = ({
                   type='button'
                   onClick={() => handleRemoveResource('comprehension')}
                   className='p-1 hover:bg-primary-100 rounded transition-colors ml-2'
-                  title='Remove comprehension'
+                  title='Remove instructions'
                 >
                   <LuX className='w-4 h-4 text-primary-700' />
                 </button>

@@ -234,7 +234,7 @@ const ResourceUploadSection = ({
             Question Bank Resources
           </h2>
           <p className='text-sm text-neutral-600'>
-            Upload diagrams and comprehension passages for this question bank
+            Upload diagrams and instructions for this question bank
           </p>
           {isResourcesLoading && (
             <p className='text-xs text-neutral-500 mt-1'>
@@ -248,7 +248,7 @@ const ResourceUploadSection = ({
             {diagrams.length} Diagrams
           </span>
           <span className='text-sm px-3 py-1.5 bg-primary-100 text-primary-700 rounded-full'>
-            {comprehensions.length} Passages
+            {comprehensions.length} Instructions
           </span>
         </div>
       </div>
@@ -278,7 +278,7 @@ const ResourceUploadSection = ({
         >
           <div className='flex items-center gap-2'>
             <LuFileText className='w-4 h-4' />
-            Comprehensions
+            Instructions
           </div>
         </button>
       </div>
@@ -550,27 +550,27 @@ const ResourceUploadSection = ({
               className='flex items-center gap-2 px-4 py-2 border-2 border-dashed border-neutral-300 rounded-lg hover:border-primary-400 hover:bg-primary-50 transition-all w-full justify-center'
             >
               <LuUpload className='w-5 h-5' />
-              <span className='font-medium'>Add Comprehension Passage</span>
+              <span className='font-medium'>Add Instructions</span>
             </button>
           ) : (
             <div className='flex flex-col gap-3 p-4 border border-neutral-200 rounded-lg bg-neutral-50'>
               <label htmlFor='comp-title' className='sr-only'>
-                Passage Title
+                Instructions Title
               </label>
               <input
                 id='comp-title'
                 type='text'
-                placeholder='Passage Title'
+                placeholder='Instructions Title'
                 value={compTitle}
                 onChange={(e) => setCompTitle(e.target.value)}
                 className='px-3 py-2 border border-neutral-300 rounded-md focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 bg-white'
               />
               <label htmlFor='comp-text' className='sr-only'>
-                Comprehension Passage
+                Instructions
               </label>
               <textarea
                 id='comp-text'
-                placeholder='Paste or type the comprehension passage here...'
+                placeholder='Paste or type the instructions here...'
                 value={compText}
                 onChange={(e) => setCompText(e.target.value)}
                 rows={8}
@@ -584,7 +584,7 @@ const ResourceUploadSection = ({
                 >
                   {createComprehensionMutation.isPending
                     ? 'Saving...'
-                    : 'Save Passage'}
+                    : 'Save Instructions'}
                 </Button>
                 <button
                   type='button'
@@ -665,7 +665,7 @@ const ResourceUploadSection = ({
               <div className='flex items-center justify-between'>
                 <div>
                   <h4 className='text-sm font-semibold text-primary-800'>
-                    Edit comprehension
+                    Edit instructions
                   </h4>
                   <p className='text-xs text-neutral-700'>
                     Update the title or content.
@@ -780,7 +780,7 @@ const ResourceUploadSection = ({
             !compEditTarget &&
             !isResourcesLoading && (
               <div className='text-center py-8 text-neutral-500'>
-                No comprehension passages added yet
+                No instructions added yet
               </div>
             )}
         </div>
@@ -800,7 +800,7 @@ const ResourceUploadSection = ({
               <h3 className='text-xl font-semibold'>
                 {previewResource.type === 'diagram'
                   ? 'Diagram Preview'
-                  : 'Comprehension Passage'}
+                  : 'Instructions'}
               </h3>
               <button
                 onClick={() => setPreviewResource(null)}
