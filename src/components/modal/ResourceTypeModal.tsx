@@ -84,8 +84,8 @@ const ResourceTypeModal = ({
               No Resources Available
             </h3>
             <p className='text-sm text-neutral-600 max-w-md'>
-              Upload diagrams or add comprehension passages in the resources
-              section first before attaching them to questions.
+              Upload diagrams or add instructions in the resources section
+              before attaching them to questions.
             </p>
           </div>
         ) : (
@@ -118,7 +118,7 @@ const ResourceTypeModal = ({
                 >
                   <div className='flex items-center gap-2'>
                     <LuFileText className='w-4 h-4' />
-                    Passages ({availableResources.comprehensions.length})
+                    Instructions ({availableResources.comprehensions.length})
                   </div>
                 </button>
               )}

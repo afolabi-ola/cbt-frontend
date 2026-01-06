@@ -213,11 +213,11 @@ const Questions = () => {
                                 });
                               }}
                               className='group relative hover:scale-110 transition-transform'
-                              title='View comprehension'
+                              title='View instructions'
                             >
                               <LuFileText className='w-4 h-4 text-primary-600 cursor-pointer' />
                               <span className='absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-neutral-800 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10'>
-                                View comprehension
+                                View instructions
                               </span>
                             </button>
                           )}
@@ -403,7 +403,7 @@ const Questions = () => {
               <h3 className='text-xl font-semibold'>
                 {resourcePreview.type === 'diagram'
                   ? 'Diagram Preview'
-                  : 'Comprehension Passage'}
+                  : 'Instructions'}
               </h3>
               <button
                 onClick={() => setResourcePreview(null)}
