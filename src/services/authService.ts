@@ -133,6 +133,13 @@ export const authService = {
     return response.data;
   },
 
+  updateUserStatus: async (userId: string | number, isActive: boolean) => {
+    const response = await api.patch(`${AUTH_BASE}/users/${userId}/status`, {
+      isActive,
+    });
+    return response.data;
+  },
+
   //   getCurrentUser: async (): Promise<LoginResponse> => {
   //     const response = await api.get(`${AUTH_BASE}/me`);
   //     return response.data;

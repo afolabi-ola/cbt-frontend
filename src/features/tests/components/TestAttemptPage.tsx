@@ -17,6 +17,7 @@ import { useStartTestSession } from '../hooks/useStartTestSession';
 import { LuX } from 'react-icons/lu';
 import Image from 'next/image';
 import { useSubmitAnswer } from '../hooks/useSubmitAnswer';
+import { STUDENT_PROFILE_PICTURE_STORAGE_KEY } from '@/lib/constants';
 
 export default function TestAttemptPage() {
   const searchParams = useSearchParams();
@@ -42,6 +43,16 @@ export default function TestAttemptPage() {
   }, [questions, sessionId, push, startTest, testId]);
 
   const [marked, setMarked] = useState<number[]>([]);
+  const [storedProfilePicture, setStoredProfilePicture] = useState<
+    string | null
+  >(null);
+
+  useEffect(() => {
+    setStoredProfilePicture(
+      sessionStorage.getItem(STUDENT_PROFILE_PICTURE_STORAGE_KEY),
+    );
+  }, []);
+
   // Resource viewers: modal for diagrams, drawer for comprehension text
   const [diagramModal, setDiagramModal] = useState<string | null>(null);
   const [drawer, setDrawer] = useState<{ content: string } | null>(null);
@@ -173,6 +184,7 @@ export default function TestAttemptPage() {
       {/* Sidebar */}
       <TestAttemptSidebar
         studentName={`${student?.firstname} ${student?.lastname}`}
+        profilePicture={student?.profilePicture ?? storedProfilePicture}
         total={progress?.total || 0}
         answered={Object.keys(answers).length}
         marked={marked.length}

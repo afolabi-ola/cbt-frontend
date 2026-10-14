@@ -107,7 +107,11 @@ export default function StudentDashboardHeader() {
             </ButtonIcon>
           </div>
           <div className='hidden sm:block'>
-            <ProfilePic role={userRole} />
+            <ProfilePic
+              role={userRole}
+              imageUrl={dashboardData?.data?.profilePicture ?? undefined}
+              name={dashboardData?.data?.studentName ?? 'Student'}
+            />
           </div>
 
           {/* Mobile Menu Button */}
@@ -182,7 +186,10 @@ export default function StudentDashboardHeader() {
                 )}
               </ButtonIcon>
             </div>
-            <ProfilePic />
+            <ProfilePic
+              imageUrl={dashboardData?.data?.profilePicture ?? undefined}
+              name={dashboardData?.data?.studentName ?? 'Student'}
+            />
           </div>
         </div>
       )}

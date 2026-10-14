@@ -19,6 +19,8 @@ export interface Student {
   username: string;
   email: string;
   phoneNumber: string;
+  profilePicture?: string | null;
+  isActive: boolean;
   class: StudentClass;
   createdAt: Date;
 }

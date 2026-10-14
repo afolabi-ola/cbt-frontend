@@ -6,6 +6,7 @@ import Input from "@/components/ui/input";
 import Button from "@/components/ui/Button";
 import Modal from '@/components/modal';
 import { FaEyeSlash, FaEye } from "react-icons/fa";
+import { FiEdit3, FiKey, FiTrash2, FiUser } from 'react-icons/fi';
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -18,6 +19,7 @@ import { useServerPagination } from '@/hooks/useServerPagination';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import useChangeTeacherPassword from '@/features/teachers/hooks/useChangeTeacherPassword';
 import useDeleteTeacher from '@/features/teachers/hooks/useDeleteTeacher';
+import useToggleTeacherStatus from '@/features/teachers/hooks/useToggleTeacherStatus';
 import type { AllTeachers } from '@/types/dashboard.types';
 import { formatDate } from '../../../../../utils/helpers';
 import getErrorDetails from '@/utils/getErrorDetails';
@@ -77,8 +79,13 @@ export default function AdminTeachersPage() {
     modalContent: AllTeachers | null;
     type: 'create' | 'update' | 'delete' | 'updateProfile';
   }>({ isOpen: false, modalContent: null, type: 'create' });
+  const [previewPicture, setPreviewPicture] = useState<{
+    url: string;
+    name: string;
+  } | null>(null);
 
   const deleteMutation = useDeleteTeacher();
+  const statusMutation = useToggleTeacherStatus();
 
   // update modal state helper
   const updateModalState = ({
@@ -253,12 +260,14 @@ export default function AdminTeachersPage() {
             label='All Teachers'
             headerColumns={[
               'S/N',
+              'Photo',
               `Name`,
               'Username/ID',
               'Email',
               'Phone',
               'Class(es)',
               'Course(s)',
+              'Active',
               'Created on',
             ]}
             itemKey={({ item }) => `${item.id}`}
@@ -280,6 +289,33 @@ export default function AdminTeachersPage() {
                       1}
                     .
                   </span>
+                </TableDataItem>
+                <TableDataItem>
+                  {item.profilePicture ? (
+                    <button
+                      type='button'
+                      onClick={() =>
+                        setPreviewPicture({
+                          url: item.profilePicture!,
+                          name: `${item.firstname} ${item.lastname}`,
+                        })
+                      }
+                      className='mx-auto block rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 cursor-pointer'
+                      aria-label={`View ${item.firstname} ${item.lastname}'s profile picture`}
+                    >
+                      <img
+                        src={item.profilePicture}
+                        alt={`${item.firstname} ${item.lastname}`}
+                        className='h-9 w-9 rounded-full object-cover ring-2 ring-primary-100 transition hover:scale-110'
+                      />
+                    </button>
+                  ) : (
+                    <span className='mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-primary-100 text-xs font-bold text-primary-700'>
+                      {`${item.firstname?.[0] ?? ''}${item.lastname?.[0] ?? ''}`.toUpperCase() || (
+                        <FiUser />
+                      )}
+                    </span>
+                  )}
                 </TableDataItem>
                 <TableDataItem>
                   {item.firstname + ' ' + item.lastname || 'N/A'}
@@ -306,6 +342,27 @@ export default function AdminTeachersPage() {
                     : 'N/A'}
                 </TableDataItem>
                 <TableDataItem>
+                  <div className='flex items-center justify-center'>
+                    <label className='relative inline-flex cursor-pointer items-center'>
+                      <input
+                        type='checkbox'
+                        className='peer sr-only disabled:cursor-not-allowed'
+                        aria-label={`Toggle ${item.username} active status`}
+                        checked={item.isActive}
+                        onChange={(event) => {
+                          statusMutation.mutate({
+                            userId: item.id,
+                            isActive: event.target.checked,
+                          });
+                        }}
+                        disabled={statusMutation.isPending}
+                      />
+                      <div className='relative h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-primary-600 peer-disabled:cursor-not-allowed peer-disabled:opacity-50' />
+                      <span className='absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5 peer-disabled:opacity-50' />
+                    </label>
+                  </div>
+                </TableDataItem>
+                <TableDataItem>
                   {formatDate(item.createdAt.toString()) || 'N/A'}
                 </TableDataItem>
               </>
@@ -314,14 +371,15 @@ export default function AdminTeachersPage() {
               updateModalState({ key: 'modalContent', value: item })
             }
             actionModalContent={
-              <div className='flex flex-col gap-2 w-full'>
+              <div className='flex w-full flex-col gap-2 rounded-xl border border-neutral-200 bg-white p-2 shadow-sm'>
                 <button
                   onClick={() => {
                     updateModalState({ key: 'type', value: 'updateProfile' });
                     updateModalState({ key: 'isOpen', value: true });
                   }}
-                  className='px-2 py-1 rounded bg-primary-500 text-white text-xs cursor-pointer'
+                  className='flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-neutral-700 transition hover:bg-primary-50 hover:text-primary-700'
                 >
+                  <FiEdit3 />
                   Update Profile
                 </button>
                 <button
@@ -329,8 +387,9 @@ export default function AdminTeachersPage() {
                     updateModalState({ key: 'type', value: 'update' });
                     updateModalState({ key: 'isOpen', value: true });
                   }}
-                  className='px-2 py-1 rounded bg-primary-500 text-white text-xs cursor-pointer'
+                  className='flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-neutral-700 transition hover:bg-primary-50 hover:text-primary-700'
                 >
+                  <FiKey />
                   Update Password
                 </button>
                 <button
@@ -338,8 +397,9 @@ export default function AdminTeachersPage() {
                     updateModalState({ key: 'type', value: 'delete' });
                     updateModalState({ key: 'isOpen', value: true });
                   }}
-                  className='px-2 py-1 rounded bg-error-500 text-white text-xs cursor-pointer'
+                  className='flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-error-700 transition hover:bg-error-50'
                 >
+                  <FiTrash2 />
                   Delete Teacher
                 </button>
               </div>
@@ -411,6 +471,35 @@ export default function AdminTeachersPage() {
                 </Button>
               </div>
             </div>
+          </div>
+        )}
+      </Modal>
+
+      <Modal
+        modalIsOpen={Boolean(previewPicture)}
+        setModalIsOpen={(isOpen) => {
+          if (!isOpen) setPreviewPicture(null);
+        }}
+      >
+        {previewPicture && (
+          <div className='flex flex-col items-center gap-4 p-2'>
+            <div className='flex w-full items-center justify-between'>
+              <h2 className='text-lg font-semibold text-neutral-900'>
+                {previewPicture.name}
+              </h2>
+              <button
+                type='button'
+                onClick={() => setPreviewPicture(null)}
+                className='rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-600 hover:bg-neutral-100'
+              >
+                Close
+              </button>
+            </div>
+            <img
+              src={previewPicture.url}
+              alt={`${previewPicture.name} profile picture`}
+              className='max-h-[70vh] max-w-full rounded-xl object-contain shadow-sm'
+            />
           </div>
         )}
       </Modal>

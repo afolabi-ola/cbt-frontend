@@ -9,6 +9,8 @@ import useDashboard from '../queries/useDashboard';
 import Link from 'next/link';
 import { useSystemSettingsStore } from '@/store/useSystemSettingsStore';
 import getErrorDetails from '@/utils/getErrorDetails';
+import { useEffect } from 'react';
+import { STUDENT_PROFILE_PICTURE_STORAGE_KEY } from '@/lib/constants';
 
 export default function StudentDashboardPage() {
   const {
@@ -18,6 +20,19 @@ export default function StudentDashboardPage() {
     isFetching: isDashboardDataFetching,
   } = useDashboard();
   const settings = useSystemSettingsStore((state) => state.settings);
+
+  useEffect(() => {
+    const profilePicture = dashboardData?.data?.profilePicture;
+
+    if (profilePicture) {
+      sessionStorage.setItem(
+        STUDENT_PROFILE_PICTURE_STORAGE_KEY,
+        profilePicture,
+      );
+    } else if (dashboardData) {
+      sessionStorage.removeItem(STUDENT_PROFILE_PICTURE_STORAGE_KEY);
+    }
+  }, [dashboardData]);
 
   const isInitialLoading =
     isDashboardDataLoading || (isDashboardDataFetching && !dashboardData);

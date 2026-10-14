@@ -115,6 +115,7 @@ export default function StudentProfilePage({
         <ProfileHeader
           fullName={`${profileData.firstname} ${profileData.lastname}`}
           level={profileData.class?.className || 'Unassigned'}
+          imageUrl={profileData.profilePicture}
           onEditProfile={handleEditProfile}
           role={role}
         />

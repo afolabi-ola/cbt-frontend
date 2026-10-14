@@ -15,6 +15,8 @@ export type ProgressStatus = 'not-started' | 'in-progress' | 'completed';
 // Centralized TestType union so the value can be reused throughout the app.
 export type TestType = 'TEST' | 'EXAM' | 'PRACTICE';
 
+export const STUDENT_PROFILE_PICTURE_STORAGE_KEY = 'studentProfilePicture';
+
 export const TEST_TYPE = {
 	TEST: 'TEST' as TestType,
 	EXAM: 'EXAM' as TestType,

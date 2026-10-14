@@ -1,8 +1,10 @@
 import { FaUser } from 'react-icons/fa';
+import Image from 'next/image';
 
 interface ProfileHeaderProps {
   fullName: string;
   level: string;
+  imageUrl?: string | null;
   onEditProfile?: () => void;
   role?: 'admin' | 'student' | 'teacher';
 }
@@ -14,6 +16,7 @@ interface ProfileHeaderProps {
 export default function ProfileHeader({
   fullName,
   level,
+  imageUrl,
   onEditProfile,
   role = 'student',
 }: ProfileHeaderProps) {
@@ -22,7 +25,16 @@ export default function ProfileHeader({
       <div className='flex items-center gap-4'>
         {/* Profile Picture */}
         <div className='relative w-20 h-20 rounded-full overflow-hidden bg-linear-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-lg'>
-          <FaUser className='text-white text-3xl' />
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt={`${fullName} profile picture`}
+              fill
+              className='object-cover'
+            />
+          ) : (
+            <FaUser className='text-white text-3xl' />
+          )}
         </div>
 
         {/* User Info */}
