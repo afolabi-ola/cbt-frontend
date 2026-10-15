@@ -30,8 +30,14 @@ const AdminSidebar = ({
   return (
     <>
       {/* desktop view */}
-      <section className='hidden md:block w-full max-w-70 max-h-screen sticky top-0 overflow-y-auto'>
-        <aside className='flex flex-col gap-12 w-full justify-between bg-primary-600 h-full p-4'>
+      <section className='hidden md:block w-full max-w-70 max-h-screen sticky top-0 '>
+        <aside
+          className='flex flex-col gap-12 w-full justify-between bg-primary-600 h-full p-4 overflow-y-auto  [&::-webkit-scrollbar]:w-2
+     [&::-webkit-scrollbar-track]:bg-primary-600
+     [&::-webkit-scrollbar-thumb]:bg-slate-400
+     [&::-webkit-scrollbar-thumb]:rounded-full
+     hover:[&::-webkit-scrollbar-thumb]:bg-slate-500'
+        >
           <div className='flex flex-col gap-12 w-full'>
             <div className='flex flex-row items-center gap-4'>
               {settings?.logoUrl && <Logo />}

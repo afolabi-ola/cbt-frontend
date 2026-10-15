@@ -2,8 +2,11 @@ import api from '@/lib/axios';
 import internalApi from '@/lib/internalApi';
 import {
   LoginPayload,
+  LoginSession,
+  LoginSessionLogoutResponse,
   LoginResponse,
   LogoutResponse,
+  LoginSessionsResponse,
   RegisterPayload,
   UserRole,
 } from '@/types/auth.types';
@@ -115,6 +118,32 @@ export const authService = {
 
       return { success: false, message: 'Unexpected error during logout' };
     }
+  },
+
+  getLoginSessions: async (): Promise<LoginSessionsResponse> => {
+    const response = await api.get(`${AUTH_BASE}/login-sessions`);
+    return response.data;
+  },
+
+  getLoginSession: async (username: string): Promise<LoginSession> => {
+    const response = await api.get(
+      `${AUTH_BASE}/login-sessions/${encodeURIComponent(username)}`,
+    );
+    return response.data;
+  },
+
+  logoutLoginSession: async (
+    username: string,
+  ): Promise<LoginSessionLogoutResponse> => {
+    const response = await api.post(
+      `${AUTH_BASE}/login-sessions/${encodeURIComponent(username)}/logout`,
+    );
+    return response.data;
+  },
+
+  logoutAllLoginSessions: async (): Promise<LoginSessionLogoutResponse> => {
+    const response = await api.post(`${AUTH_BASE}/login-sessions/logout-all`);
+    return response.data;
   },
 
   changePassword: async (
