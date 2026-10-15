@@ -1,4 +1,6 @@
 import { authService } from '@/services/authService';
+import { initializeSocket } from '@/lib/socket';
+import { useUserStore } from '@/store/useUserStore';
 import { LoginPayload, LoginResponse } from '@/types/auth.types';
 import { AppError } from '@/types/errors.types';
 import getErrorDetails from '@/utils/getErrorDetails';
@@ -8,6 +10,7 @@ import toast from 'react-hot-toast';
 
 export default function useLogin() {
   const queryClient = useQueryClient();
+  const setRole = useUserStore((state) => state.setRole);
 
   const { replace } = useRouter();
   const {
@@ -23,6 +26,8 @@ export default function useLogin() {
       queryClient.invalidateQueries();
 
       const role = data.data.data.role;
+      initializeSocket();
+      setRole(role.toLowerCase() as 'admin' | 'teacher' | 'student');
 
       if (role === 'STUDENT') {
         toast.success(data.message);
