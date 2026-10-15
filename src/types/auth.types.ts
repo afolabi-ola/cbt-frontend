@@ -38,6 +38,33 @@ export interface LoginResponse {
 }
 
 export interface LogoutResponse{ success: boolean, message: string };
+
+export interface LoginSession {
+  username: string;
+  loginId: string;
+  device: string;
+  browser: string;
+  ip: string;
+  loginTime: string;
+  lastActivity: string;
+}
+
+export interface LoginSessionsResponse {
+  sessions: LoginSession[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
+}
+
+export interface LoginSessionLogoutResponse {
+  success: boolean;
+  message: string;
+  username?: string;
+  count?: number;
+}
   
 
 export interface UserPayload {

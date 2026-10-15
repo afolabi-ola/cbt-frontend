@@ -14,7 +14,7 @@ import { AiFillHome } from 'react-icons/ai';
 import { GiGraduateCap, GiTeacher } from 'react-icons/gi';
 import { IoIosSettings } from 'react-icons/io';
 import { BiBell, BiNotepad, BiPause, BiUser } from 'react-icons/bi';
-import { FiTarget } from 'react-icons/fi';
+import { FiMonitor, FiTarget } from 'react-icons/fi';
 import Footer from '@/components/layout/Footer';
 
 const adminRoutes: { path: string; label: string; icon: ReactNode }[] = [
@@ -63,7 +63,11 @@ const adminRoutes: { path: string; label: string; icon: ReactNode }[] = [
     label: 'Notifications',
     icon: <BiBell size={20} />,
   },
-
+  {
+    path: '/admin/login-sessions',
+    label: 'Login Sessions',
+    icon: <FiMonitor size={20} />,
+  },
   {
     path: '/admin/settings',
     label: 'System Settings',
