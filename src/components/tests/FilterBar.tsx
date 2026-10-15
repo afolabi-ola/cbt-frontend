@@ -1,5 +1,11 @@
 'use client';
-import React, { ReactNode, useEffect, useMemo, useState } from 'react';
+import React, {
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 export type FilterState = {
   query: string;
@@ -48,10 +54,15 @@ export default function FilterBar({
   );
 
   const [state, setState] = useState<FilterState>(initialState);
+  const onChangeRef = useRef(onChange);
 
   useEffect(() => {
-    onChange?.(state);
-  }, [state, onChange]);
+    onChangeRef.current = onChange;
+  }, [onChange]);
+
+  useEffect(() => {
+    onChangeRef.current?.(state);
+  }, [state]);
 
   const handleReset = () => {
     setState(initialState);

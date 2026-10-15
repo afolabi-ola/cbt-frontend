@@ -60,4 +60,9 @@ export interface DeleteUserResponse {
   data: { user: UserPayload };
 }
 
+export interface UpdateUserStatusResponse {
+  success: true;
+  message: string;
+  data: { user: UserPayload };
+}
 

@@ -80,6 +80,10 @@ export function useServerPagination({
       });
 
       const newSearchParams = buildSearchParams(merged);
+      if (newSearchParams.toString() === searchParams.toString()) {
+        return;
+      }
+
       router.push(`${pathname}?${newSearchParams.toString()}`);
     },
     [searchParams, pathname, router],

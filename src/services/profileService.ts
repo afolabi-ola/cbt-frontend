@@ -115,7 +115,27 @@ export const profileService = {
     data,
     userId,
   }: AdminUpdateAnyProfileRequest) => {
-    const response = await api.patch(`/profile/admin/${userId}`, data);
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        if (value instanceof Blob) {
+          formData.append(
+            key,
+            value,
+            value instanceof File ? value.name : undefined,
+          );
+        } else {
+          formData.append(key, String(value));
+        }
+      }
+    });
+
+    const response = await api.patch(`/profile/admin/${userId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
     return response.data;
   },

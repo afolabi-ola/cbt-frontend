@@ -1,6 +1,6 @@
 'use client';
 import AppTable, { TableDataItem } from '@/components/table';
-import { Badge, Button } from '@/components/ui';
+import { Button } from '@/components/ui';
 import Input from '@/components/ui/input';
 import Modal from '@/components/modal';
 import { useForm } from 'react-hook-form';
@@ -13,6 +13,7 @@ import { useAdminStudents } from '@/features/students/hooks/useStudents';
 import { useServerPagination } from '@/hooks/useServerPagination';
 import useChangeStudentPassword from '@/features/students/hooks/useChangeStudentPassword';
 import useDeleteStudent from '@/features/students/hooks/useDeleteStudent';
+import useToggleStudentStatus from '@/features/students/hooks/useToggleStudentStatus';
 import FilterBar, { FilterState } from '@/components/tests/FilterBar';
 import { formatDate } from '../../../../../utils/helpers';
 import StudentSummary from '@/components/tests/StudentSummary';
@@ -24,6 +25,14 @@ import { AllClassesResponse } from '@/types/dashboard.types';
 import { useUserStore } from '@/store/useUserStore';
 import getErrorDetails from '@/utils/getErrorDetails';
 import UpdateAnyProfileAdmin from '@/components/updateAnyProfileAdmin';
+import {
+  FiBookOpen,
+  FiEdit3,
+  FiEye,
+  FiKey,
+  FiTrash2,
+  FiUserPlus,
+} from 'react-icons/fi';
 
 export default function AdminStudentsPage() {
   // Add server pagination hook
@@ -41,22 +50,24 @@ export default function AdminStudentsPage() {
     page: 1,
   });
 
-  const handleFilterChange = (nextFilter: FilterState) => {
-    updateParams({
-      page: 1,
-      search: nextFilter.query || undefined,
-      course: nextFilter.course || undefined,
-      className: nextFilter.className || undefined,
-      status: nextFilter.status || undefined,
-      testTitle: nextFilter.testTitle || undefined,
-      startDate: nextFilter.startDate || undefined,
-    });
-  };
+  const handleFilterChange = useCallback(
+    (nextFilter: FilterState) => {
+      updateParams({
+        page: 1,
+        search: nextFilter.query || undefined,
+        course: nextFilter.course || undefined,
+        className: nextFilter.className || undefined,
+        status: nextFilter.status || undefined,
+        testTitle: nextFilter.testTitle || undefined,
+        startDate: nextFilter.startDate || undefined,
+      });
+    },
+    [updateParams],
+  );
 
-  const handleOuterReset = () => {
-    setLimit(10);
+  const handleOuterReset = useCallback(() => {
     updateParams({ sort: undefined, order: undefined, page: 1, limit: 10 });
-  };
+  }, [updateParams]);
 
   const students = useMemo<Student[]>(
     () => adminStudentsData?.data.data ?? [],
@@ -90,11 +101,13 @@ export default function AdminStudentsPage() {
       role === 'admin'
         ? [
             'S/N',
+            'Photo',
             'Name',
             'Username/ID',
             'Email',
             'Phone',
             'Class',
+            'Active',
             'Created on',
           ]
         : ['S/N', 'Name', 'Username/ID', 'Class'],
@@ -106,8 +119,13 @@ export default function AdminStudentsPage() {
     modalContent: Student | null;
     type: 'create' | 'update' | 'delete' | 'assign' | 'view' | 'updateProfile';
   }>({ isOpen: false, modalContent: null, type: 'create' });
+  const [previewPicture, setPreviewPicture] = useState<{
+    url: string;
+    name: string;
+  } | null>(null);
 
   const deleteMutation = useDeleteStudent();
+  const statusMutation = useToggleStudentStatus();
 
   // update modal state helper
   const updateModalState = useCallback(
@@ -132,15 +150,16 @@ export default function AdminStudentsPage() {
       (modalState.modalContent?.class?.courses?.length ?? 0) > 0;
 
     return role === 'admin' ? (
-      <div className='flex flex-col gap-2 w-full'>
+      <div className='flex w-full flex-col gap-2 rounded-xl border border-neutral-200 bg-white p-2 shadow-sm'>
         {hasRegisteredCourses && (
           <button
             onClick={() => {
               updateModalState({ key: 'type', value: 'view' });
               updateModalState({ key: 'isOpen', value: true });
             }}
-            className='px-2 py-1 rounded bg-primary-500 text-white text-xs cursor-pointer'
+            className='flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-neutral-700 transition hover:bg-primary-50 hover:text-primary-700'
           >
+            <FiEye />
             View Registered Courses
           </button>
         )}
@@ -149,8 +168,9 @@ export default function AdminStudentsPage() {
             updateModalState({ key: 'type', value: 'assign' });
             updateModalState({ key: 'isOpen', value: true });
           }}
-          className='px-2 py-1 rounded bg-emerald-600 text-white text-xs cursor-pointer'
+          className='flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-neutral-700 transition hover:bg-emerald-50 hover:text-emerald-700'
         >
+          <FiUserPlus />
           Assign To Class
         </button>
 
@@ -159,8 +179,9 @@ export default function AdminStudentsPage() {
             updateModalState({ key: 'type', value: 'updateProfile' });
             updateModalState({ key: 'isOpen', value: true });
           }}
-          className='px-2 py-1 rounded bg-primary-500 text-white text-xs cursor-pointer'
+          className='flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-neutral-700 transition hover:bg-primary-50 hover:text-primary-700'
         >
+          <FiEdit3 />
           Update Profile
         </button>
 
@@ -169,8 +190,9 @@ export default function AdminStudentsPage() {
             updateModalState({ key: 'type', value: 'update' });
             updateModalState({ key: 'isOpen', value: true });
           }}
-          className='px-2 py-1 rounded bg-primary-500 text-white text-xs cursor-pointer'
+          className='flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-neutral-700 transition hover:bg-primary-50 hover:text-primary-700'
         >
+          <FiKey />
           Update Password
         </button>
         <button
@@ -178,20 +200,22 @@ export default function AdminStudentsPage() {
             updateModalState({ key: 'type', value: 'delete' });
             updateModalState({ key: 'isOpen', value: true });
           }}
-          className='px-2 py-1 rounded bg-error-500 text-white text-xs cursor-pointer'
+          className='flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-error-700 transition hover:bg-error-50'
         >
+          <FiTrash2 />
           Delete Student
         </button>
       </div>
     ) : (
-      <div className='flex flex-col gap-2 w-full'>
+      <div className='flex w-full flex-col gap-2 rounded-xl border border-neutral-200 bg-white p-2 shadow-sm'>
         <button
           onClick={() => {
             updateModalState({ key: 'type', value: 'view' });
             updateModalState({ key: 'isOpen', value: true });
           }}
-          className='px-2 py-1 rounded bg-primary-500 text-white text-xs cursor-pointer'
+          className='flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-neutral-700 transition hover:bg-primary-50 hover:text-primary-700'
         >
+          <FiBookOpen />
           View Registered Courses
         </button>
       </div>
@@ -283,22 +307,51 @@ export default function AdminStudentsPage() {
           }
         >
           {modalState.type === 'view' ? (
-            <div className='grid grid-cols-4 gap-4'>
+            <div className='w-full max-w-2xl'>
+              <div className='mb-5 flex items-start justify-between border-b border-neutral-200 pb-4'>
+                <div>
+                  <p className='text-xs font-semibold uppercase tracking-[0.18em] text-primary-600'>
+                    Academic record
+                  </p>
+                  <h2 className='mt-1 text-2xl font-bold text-neutral-900'>
+                    Registered courses
+                  </h2>
+                  <p className='mt-1 text-sm text-neutral-500'>
+                    Courses assigned to {modalState.modalContent?.firstname}{' '}
+                    {modalState.modalContent?.lastname}.
+                  </p>
+                </div>
+                <div className='rounded-full bg-primary-50 px-3 py-1 text-sm font-bold text-primary-700'>
+                  {(modalState.modalContent?.class?.courses ?? []).length}
+                </div>
+              </div>
               {(modalState.modalContent?.class?.courses ?? []).length > 0 ? (
-                (modalState.modalContent?.class?.courses ?? []).map((c, i) => (
-                  <Badge key={c?.id ?? i}>
-                    <span className='block text-center'>
-                      <span className='block font-black'>
-                        {c?.title ?? 'N/A'}
-                      </span>
-                      <span className='block text-xs'>
-                        {c?.description ?? 'N/A'}
-                      </span>
-                    </span>
-                  </Badge>
-                ))
+                <div className='grid gap-3 sm:grid-cols-2'>
+                  {(modalState.modalContent?.class?.courses ?? []).map(
+                    (course) => (
+                      <div
+                        key={course.id}
+                        className='rounded-xl border border-neutral-200 bg-neutral-50 p-4'
+                      >
+                        <div className='mb-2 flex items-start gap-3'>
+                          <span className='rounded-lg bg-white p-2 text-primary-600 shadow-sm'>
+                            <FiBookOpen />
+                          </span>
+                          <h3 className='font-bold text-neutral-900'>
+                            {course.title}
+                          </h3>
+                        </div>
+                        <p className='text-sm leading-6 text-neutral-600'>
+                          {course.description || 'No description provided.'}
+                        </p>
+                      </div>
+                    ),
+                  )}
+                </div>
               ) : (
-                <span>Unassigned</span>
+                <div className='rounded-xl border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-500'>
+                  No registered courses.
+                </div>
               )}
             </div>
           ) : modalState.type === 'create' ? (
@@ -382,6 +435,35 @@ export default function AdminStudentsPage() {
         </Modal>
       </div>
 
+      <Modal
+        modalIsOpen={Boolean(previewPicture)}
+        setModalIsOpen={(isOpen) => {
+          if (!isOpen) setPreviewPicture(null);
+        }}
+      >
+        {previewPicture && (
+          <div className='flex flex-col items-center gap-4 p-2'>
+            <div className='flex w-full items-center justify-between'>
+              <h2 className='text-lg font-semibold text-neutral-900'>
+                {previewPicture.name}
+              </h2>
+              <button
+                type='button'
+                onClick={() => setPreviewPicture(null)}
+                className='rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-600 hover:bg-neutral-100'
+              >
+                Close
+              </button>
+            </div>
+            <img
+              src={previewPicture.url}
+              alt={`${previewPicture.name} profile picture`}
+              className='max-h-[70vh] max-w-full rounded-xl object-contain shadow-sm'
+            />
+          </div>
+        )}
+      </Modal>
+
       {/* ////////////////////////////////// */}
 
       <div>
@@ -414,6 +496,33 @@ export default function AdminStudentsPage() {
                     </span>
                   </TableDataItem>
                   <TableDataItem>
+                    {item.profilePicture ? (
+                      <button
+                        type='button'
+                        onClick={() =>
+                          setPreviewPicture({
+                            url: item.profilePicture!,
+                            name: `${item.firstname} ${item.lastname}`,
+                          })
+                        }
+                        className='mx-auto block rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 cursor-pointer'
+                        aria-label={`View ${item.firstname} ${item.lastname}'s profile picture`}
+                      >
+                        <img
+                          src={item.profilePicture}
+                          alt={`${item.firstname} ${item.lastname}`}
+                          className='h-9 w-9 rounded-full object-cover ring-2 ring-primary-100 transition hover:scale-110'
+                        />
+                      </button>
+                    ) : (
+                      <span className='mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-primary-100 text-xs font-bold text-primary-700'>
+                        {`${item.firstname?.[0] ?? ''}${item.lastname?.[0] ?? ''}`.toUpperCase() || (
+                          <FiUserPlus />
+                        )}
+                      </span>
+                    )}
+                  </TableDataItem>
+                  <TableDataItem>
                     {item.firstname} {item.lastname}
                   </TableDataItem>
                   <TableDataItem>{item.username ?? 'N/A'}</TableDataItem>
@@ -423,6 +532,27 @@ export default function AdminStudentsPage() {
                     {item.class?.className ?? 'Unassigned'}
                   </TableDataItem>
 
+                  <TableDataItem>
+                    <div className='flex items-center justify-center'>
+                      <label className='relative inline-flex cursor-pointer items-center'>
+                        <input
+                          type='checkbox'
+                          className='peer sr-only disabled:cursor-not-allowed'
+                          aria-label={`Toggle ${item.username} active status`}
+                          checked={item.isActive}
+                          onChange={(event) => {
+                            statusMutation.mutate({
+                              userId: item.id,
+                              isActive: event.target.checked,
+                            });
+                          }}
+                          disabled={statusMutation.isPending}
+                        />
+                        <div className='relative h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-primary-600 peer-disabled:cursor-not-allowed peer-disabled:opacity-50' />
+                        <span className='absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5 peer-disabled:opacity-50' />
+                      </label>
+                    </div>
+                  </TableDataItem>
                   <TableDataItem>
                     {item.createdAt
                       ? formatDate(item.createdAt.toString())

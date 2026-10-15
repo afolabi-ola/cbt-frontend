@@ -18,6 +18,7 @@ export interface StudentProfile {
   username: string;
   email: string | null;
   phoneNumber: string | null;
+  profilePicture?: string | null;
   role: string;
   class: {
     id: number;
@@ -87,15 +88,36 @@ export interface ProfileFormData extends PersonalInformation {
 export type UserProfile =
   | Pick<
       Student,
-      'username' | 'firstname' | 'lastname' | 'email' | 'phoneNumber' | 'id'
+      | 'username'
+      | 'firstname'
+      | 'lastname'
+      | 'email'
+      | 'phoneNumber'
+      | 'profilePicture'
+      | 'id'
     >
   | Pick<
       AllTeachers,
-      'username' | 'firstname' | 'lastname' | 'email' | 'phoneNumber' | 'id'
+      | 'username'
+      | 'firstname'
+      | 'lastname'
+      | 'email'
+      | 'phoneNumber'
+      | 'profilePicture'
+      | 'id'
     >;
 
+export interface AdminUpdateAnyProfileData {
+  username?: string;
+  firstname?: string;
+  lastname?: string;
+  email?: string;
+  phoneNumber?: string;
+  profilePicture?: File;
+}
+
 export interface AdminUpdateAnyProfileRequest {
-  data: Omit<UserProfile, 'id'>; // Data to update (excluding id)
+  data: AdminUpdateAnyProfileData;
   userId: number; // ID of the user being updated
 }
 

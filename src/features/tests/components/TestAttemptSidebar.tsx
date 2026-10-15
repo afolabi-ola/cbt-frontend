@@ -2,6 +2,7 @@
 import Button from '@/components/ui/Button';
 import Timer from './Timer';
 import { StartTestSessionResponse } from '@/types/tests.types';
+import Image from 'next/image';
 
 // Tailwind dynamic width helper (mapped to nearest 5%) to avoid inline style lint error
 function progressWidthClass(percent: number) {
@@ -41,6 +42,7 @@ export default function TestAttemptSidebar({
   handleSubmit,
   remainingSeconds,
   studentName,
+  profilePicture,
   course,
 }: {
   answered: number;
@@ -49,6 +51,7 @@ export default function TestAttemptSidebar({
   handleSubmit: () => void;
   remainingSeconds: number | null;
   studentName: string;
+  profilePicture?: string | null;
   course: StartTestSessionResponse['data']['course'] | null;
 }) {
   // Calculate progress percentage
@@ -57,8 +60,18 @@ export default function TestAttemptSidebar({
   return (
     <aside className='bg-white p-6  shadow-sm w-64'>
       <div className='flex flex-col items-center mb-6'>
-        <div className='w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center text-3xl'>
-          👤
+        <div className='w-20 h-20 overflow-hidden rounded-full bg-gray-100 flex items-center justify-center text-3xl'>
+          {profilePicture ? (
+            <Image
+              src={profilePicture}
+              alt={`${studentName} profile picture`}
+              width={80}
+              height={80}
+              className='h-full w-full object-cover'
+            />
+          ) : (
+            '👤'
+          )}
         </div>
         <p className='font-semibold mt-3 capitalize'>{studentName}</p>
         <p className='text-sm text-gray-500'>{course?.courseTitle}</p>

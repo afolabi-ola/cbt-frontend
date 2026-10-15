@@ -41,6 +41,7 @@ export interface StartTestSessionResponse {
       username: string;
       firstname: string;
       lastname: string;
+      profilePicture?: string | null;
     };
     course: {
       courseTitle: string;

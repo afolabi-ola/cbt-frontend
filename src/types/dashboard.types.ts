@@ -130,6 +130,7 @@ export interface TotalScore {
 
 export interface DashboardData {
   className: string;
+  profilePicture?: string | null;
   totalTests: number;
   activeTests: ActiveTest[];
   recentResults: RecentResults;
@@ -216,6 +217,8 @@ export interface AllTeachers {
   firstname: string;
   id: number;
   lastname: string;
+  profilePicture?: string | null;
+  isActive: boolean;
   courses: Courses[];
   teacherOf: { id: number; className: string }[];
   createdAt: Date;
