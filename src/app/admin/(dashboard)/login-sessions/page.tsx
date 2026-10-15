@@ -2,14 +2,33 @@
 
 import Modal from '@/components/modal';
 import Button from '@/components/ui/Button';
+import Pagination from '@/components/ui/Pagination';
 import SpinnerMini from '@/components/ui/SpinnerMini';
 import axios from 'axios';
+import ResultsFiltersBar, {
+  ResultFilterField,
+} from '@/features/results/components/ResultsFiltersBar';
 import { authService } from '@/services/authService';
 import type { LoginSession, LoginSessionsResponse } from '@/types/auth.types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { FiEye, FiLogOut, FiRefreshCw, FiX } from 'react-icons/fi';
+import { useServerPagination } from '@/hooks/useServerPagination';
+
+const filterFields: ResultFilterField[] = [
+  {
+    type: 'search',
+    name: 'search',
+    label: 'Search active sessions',
+    placeholder: 'Username, browser, device, IP, or login ID',
+  },
+];
+
+type LogoutConfirmation =
+  | { type: 'single'; session: LoginSession }
+  | { type: 'all' }
+  | null;
 
 const formatDate = (value: string) =>
   new Intl.DateTimeFormat('en', {
@@ -29,13 +48,24 @@ const getErrorMessage = (error: unknown) => {
 
 export default function LoginSessionsPage() {
   const queryClient = useQueryClient();
+  const { params, goToPage, updateParams, setLimit } = useServerPagination({
+    defaultPage: 1,
+    defaultLimit: 10,
+  });
   const [selectedSession, setSelectedSession] = useState<LoginSession | null>(
     null,
   );
+  const [logoutConfirmation, setLogoutConfirmation] =
+    useState<LogoutConfirmation>(null);
+
+  const page = (params.page as number | undefined) ?? 1;
+  const limit = (params.limit as number | undefined) ?? 10;
+  const search = typeof params.search === 'string' ? params.search : undefined;
+  const sessionParams = { page, limit, search };
 
   const sessionsQuery = useQuery<LoginSessionsResponse>({
-    queryKey: ['login-sessions'],
-    queryFn: authService.getLoginSessions,
+    queryKey: ['login-sessions', sessionParams],
+    queryFn: () => authService.getLoginSessions(sessionParams),
   });
 
   const logoutMutation = useMutation({
@@ -69,18 +99,23 @@ export default function LoginSessionsPage() {
   const isMutating = logoutMutation.isPending || logoutAllMutation.isPending;
 
   const handleLogoutAll = () => {
-    if (
-      sessions.length > 0 &&
-      window.confirm('Log out every currently active user session?')
-    ) {
-      logoutAllMutation.mutate();
-    }
+    if (sessions.length > 0) setLogoutConfirmation({ type: 'all' });
   };
 
   const handleLogout = (session: LoginSession) => {
-    if (window.confirm(`Log out ${session.username}'s session?`)) {
-      logoutMutation.mutate(session.username);
+    setLogoutConfirmation({ type: 'single', session });
+  };
+
+  const confirmLogout = () => {
+    if (!logoutConfirmation) return;
+
+    if (logoutConfirmation.type === 'all') {
+      logoutAllMutation.mutate();
+    } else {
+      logoutMutation.mutate(logoutConfirmation.session.username);
     }
+
+    setLogoutConfirmation(null);
   };
 
   return (
@@ -115,6 +150,15 @@ export default function LoginSessionsPage() {
       </div>
 
       <section className='overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm'>
+        <div className='border-b border-neutral-200 px-4 py-4 sm:px-6'>
+          <ResultsFiltersBar
+            fields={filterFields}
+            initialValues={{ search }}
+            limit={limit}
+            onChange={updateParams}
+            onLimitChange={setLimit}
+          />
+        </div>
         <div className='flex items-center justify-between border-b border-neutral-200 px-4 py-4 sm:px-6'>
           <div>
             <h2 className='font-semibold text-neutral-900'>Active users</h2>
@@ -199,9 +243,68 @@ export default function LoginSessionsPage() {
                 ))}
               </tbody>
             </table>
+            <div className='border-t border-neutral-200 px-4 py-4 sm:px-6'>
+              <Pagination
+                page={sessionsQuery.data?.pagination.page ?? page}
+                limit={sessionsQuery.data?.pagination.limit ?? limit}
+                totalItems={sessionsQuery.data?.pagination.total ?? 0}
+                totalPages={sessionsQuery.data?.pagination.pages ?? 1}
+                onPageChange={goToPage}
+                disabled={sessionsQuery.isFetching || isMutating}
+                showPageSize={false}
+                showPageInfo
+              />
+            </div>
           </div>
         )}
       </section>
+
+      <Modal
+        modalIsOpen={Boolean(logoutConfirmation)}
+        setModalIsOpen={(isOpen) => {
+          if (!isOpen || isMutating) setLogoutConfirmation(null);
+        }}
+      >
+        {logoutConfirmation && (
+          <div className='space-y-5'>
+            <div>
+              <p className='text-sm font-medium uppercase tracking-wider text-error-700'>
+                Confirm action
+              </p>
+              <h2 className='mt-1 text-xl font-semibold text-neutral-900'>
+                {logoutConfirmation.type === 'all'
+                  ? 'Logout all sessions?'
+                  : `Logout ${logoutConfirmation.session.username}?`}
+              </h2>
+              <p className='mt-2 text-sm text-neutral-600'>
+                {logoutConfirmation.type === 'all'
+                  ? 'Every active user session will be terminated immediately.'
+                  : 'This user will be redirected to the login page immediately.'}
+              </p>
+            </div>
+            <div className='flex flex-col-reverse gap-2 sm:flex-row sm:justify-end'>
+              <button
+                type='button'
+                onClick={() => setLogoutConfirmation(null)}
+                disabled={isMutating}
+                className='rounded-md border border-neutral-300 px-4 py-2 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50'
+              >
+                Cancel
+              </button>
+              <div>
+                <Button
+                  variant='danger'
+                  onClick={confirmLogout}
+                  disabled={isMutating}
+                >
+                  <FiLogOut aria-hidden='true' className='mr-2' /> Confirm
+                  logout
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
 
       <Modal
         modalIsOpen={Boolean(selectedSession)}

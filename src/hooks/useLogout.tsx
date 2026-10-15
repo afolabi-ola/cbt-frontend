@@ -1,6 +1,7 @@
 'use client';
 
 import { authService } from '@/services/authService';
+import { useSocket } from '@/context/SocketContext';
 import { useUserStore } from '@/store/useUserStore';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -10,6 +11,7 @@ export default function useLogout() {
   const { replace } = useRouter();
   const queryClient = useQueryClient();
   const resetUser = useUserStore((state) => state.reset);
+  const { disconnect } = useSocket();
 
   const { mutate: logout, isPending: isLoggingOut } = useMutation({
     mutationFn: authService.logout,
@@ -19,6 +21,7 @@ export default function useLogout() {
     onSuccess: (data) => {
       toast.success(data.message);
       queryClient.invalidateQueries();
+      disconnect();
       resetUser();
       replace('/');
     },

@@ -4,6 +4,7 @@ import {
   LoginPayload,
   LoginSession,
   LoginSessionLogoutResponse,
+  LoginSessionsQueryParams,
   LoginResponse,
   LogoutResponse,
   LoginSessionsResponse,
@@ -120,8 +121,10 @@ export const authService = {
     }
   },
 
-  getLoginSessions: async (): Promise<LoginSessionsResponse> => {
-    const response = await api.get(`${AUTH_BASE}/login-sessions`);
+  getLoginSessions: async (
+    params?: LoginSessionsQueryParams,
+  ): Promise<LoginSessionsResponse> => {
+    const response = await api.get(`${AUTH_BASE}/login-sessions`, { params });
     return response.data;
   },
 

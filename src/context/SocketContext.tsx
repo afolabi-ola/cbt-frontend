@@ -141,7 +141,11 @@ import React, {
   useCallback,
 } from 'react';
 import { Socket } from 'socket.io-client';
-import { initializeSocket, disconnectSocket } from '@/lib/socket';
+import { getSocket, initializeSocket, disconnectSocket } from '@/lib/socket';
+import { useUserStore } from '@/store/useUserStore';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface SocketContextType {
   socket: Socket | null;
@@ -159,6 +163,10 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const socketRef = useRef<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [socketInstance, setSocketInstance] = useState<Socket | null>(null);
+  const role = useUserStore((state) => state.role);
+  const resetUser = useUserStore((state) => state.reset);
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
   const connect = useCallback(() => {
     if (socketRef.current?.connected) return;
@@ -169,16 +177,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
       setSocketInstance(newSocket);
 
-      // Attach basic lifecycle listeners
-      newSocket.on('connect', () => {
-        setIsConnected(true);
-      });
-      newSocket.on('disconnect', () => {
-        setIsConnected(false);
-      });
-      newSocket.on('connect_error', (err) => {
-        console.error('❌ Socket connection error:', err.message);
-      });
     } catch (error) {
       console.error('❌ Failed to connect socket:', error);
     }
@@ -189,6 +187,65 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     socketRef.current = null;
     setIsConnected(false);
   }, []);
+
+  useEffect(() => {
+    const existingSocket = getSocket();
+
+    if (role && existingSocket) {
+      socketRef.current = existingSocket;
+      setSocketInstance(existingSocket);
+      setIsConnected(existingSocket.connected);
+    } else if (!role && socketRef.current) {
+      disconnect();
+    }
+  }, [disconnect, role]);
+
+  useEffect(() => {
+    if (!socketInstance) return;
+
+    const handleConnect = () => setIsConnected(true);
+    const handleDisconnect = () => setIsConnected(false);
+    const handleConnectError = (error: Error) => {
+      console.error('❌ Socket connection error:', error.message);
+    };
+
+    socketInstance.on('connect', handleConnect);
+    socketInstance.on('disconnect', handleDisconnect);
+    socketInstance.on('connect_error', handleConnectError);
+
+    return () => {
+      socketInstance.off('connect', handleConnect);
+      socketInstance.off('disconnect', handleDisconnect);
+      socketInstance.off('connect_error', handleConnectError);
+    };
+  }, [socketInstance]);
+
+  useEffect(() => {
+    if (!socketInstance || !role) return;
+
+    const handleForceLogout = async () => {
+      try {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          credentials: 'include',
+        });
+      } finally {
+        queryClient.clear();
+        resetUser();
+        disconnect();
+        toast.error('Your session was ended by an administrator.');
+        router.replace(
+          role === 'admin' || role === 'teacher' ? '/admin/login' : '/',
+        );
+      }
+    };
+
+    socketInstance.on('force-logout', handleForceLogout);
+
+    return () => {
+      socketInstance.off('force-logout', handleForceLogout);
+    };
+  }, [disconnect, queryClient, resetUser, role, router, socketInstance]);
 
   const emit: SocketContextType['emit'] = useCallback((event, payload) => {
     socketRef.current?.emit(event, payload);
@@ -204,11 +261,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     if (listener) s.off(event, listener);
     else s.removeAllListeners(event);
   }, []);
-
-  // cleanup on unmount
-  useEffect(() => {
-    return () => disconnect();
-  }, [disconnect]);
 
   return (
     <SocketContext.Provider

@@ -59,6 +59,12 @@ export interface LoginSessionsResponse {
   };
 }
 
+export interface LoginSessionsQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+}
+
 export interface LoginSessionLogoutResponse {
   success: boolean;
   message: string;
