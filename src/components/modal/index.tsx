@@ -7,6 +7,7 @@ interface ModalProps {
   modalIsOpen: boolean;
   setModalIsOpen: Dispatch<SetStateAction<boolean>>;
   children: ReactNode;
+  dismissible?: boolean;
 }
 
 const customStyles = {
@@ -32,9 +33,14 @@ const customStyles = {
   },
 };
 
-const Modal = ({ modalIsOpen, setModalIsOpen, children }: ModalProps) => {
+const Modal = ({
+  modalIsOpen,
+  setModalIsOpen,
+  children,
+  dismissible = true,
+}: ModalProps) => {
   const handleCloseModal = () => {
-    setModalIsOpen(false);
+    if (dismissible) setModalIsOpen(false);
   };
 
   useEffect(() => {

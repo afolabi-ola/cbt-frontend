@@ -19,7 +19,7 @@ const RecentResultsTable: React.FC<RecentResultsTableProps> = ({ results }) => {
 
   return (
     <div className='w-full overflow-x-auto rounded-xl shadow-sm border border-gray-100 bg-white'>
-      <table className='min-w-full text-sm text-left'>
+      <table className='min-w-[520px] w-full text-sm text-left'>
         <thead className='bg-gray-50'>
           <tr>
             <th className='px-6 py-3 font-semibold text-gray-700'>Subject</th>
@@ -45,8 +45,8 @@ const RecentResultsTable: React.FC<RecentResultsTableProps> = ({ results }) => {
                       result.score.toLowerCase() === 'null'
                         ? 'bg-gray-300 text-gray-500'
                         : result.status.toLowerCase() === 'passed'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-700'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-red-100 text-red-700'
                     }`}
                   >
                     {result.score}
@@ -59,8 +59,8 @@ const RecentResultsTable: React.FC<RecentResultsTableProps> = ({ results }) => {
                       result.status.toLowerCase() === 'passed'
                         ? 'bg-green-100 text-green-700'
                         : result.status.toLowerCase() === 'failed'
-                        ? 'bg-red-100 text-red-700'
-                        : 'bg-gray-300 text-gray-500'
+                          ? 'bg-red-100 text-red-700'
+                          : 'bg-gray-300 text-gray-500'
                     }`}
                   >
                     {result.status.charAt(0).toUpperCase() +
