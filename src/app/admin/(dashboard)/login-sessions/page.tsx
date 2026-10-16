@@ -103,6 +103,7 @@ export default function LoginSessionsPage() {
   };
 
   const handleLogout = (session: LoginSession) => {
+    setSelectedSession(null);
     setLogoutConfirmation({ type: 'single', session });
   };
 
@@ -186,8 +187,8 @@ export default function LoginSessionsPage() {
             No active login sessions found.
           </div>
         ) : (
-          <div className='overflow-x-auto'>
-            <table className='w-full text-left text-sm'>
+          <div className='min-w-0 max-w-full overflow-x-auto overflow-y-hidden'>
+            <table className='min-w-[900px] w-full text-left text-sm'>
               <thead className='bg-primary-50 text-xs uppercase tracking-wide text-primary-800'>
                 <tr>
                   <th className='px-6 py-3 font-semibold'>User</th>

@@ -35,7 +35,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results }) => {
 
   return (
     <div className='w-full overflow-x-auto rounded-xl shadow-sm border border-gray-100 bg-white'>
-      <table className='min-w-full text-sm text-left'>
+      <table className='min-w-[720px] w-full text-sm text-left'>
         <thead className='bg-gray-50'>
           <tr>
             <th className='px-6 py-3 font-semibold text-gray-700'>Course</th>

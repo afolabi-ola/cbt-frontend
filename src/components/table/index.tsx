@@ -207,7 +207,7 @@ const AppTable = <T,>({
   if (!data) return null;
 
   return (
-    <div className='flex flex-col overflow-x-auto w-full relative'>
+    <div className='flex min-w-0 max-w-full flex-col overflow-x-auto overflow-y-hidden w-full relative'>
       {label && (
         <span
           className={`${
@@ -218,7 +218,7 @@ const AppTable = <T,>({
         </span>
       )}
 
-      <table className='w-full border-separate border-spacing-y-4'>
+      <table className='min-w-max w-full border-separate border-spacing-y-4'>
         <thead className='bg-primary-600'>
           <tr>
             {columns.map((item, itemIndex) => (

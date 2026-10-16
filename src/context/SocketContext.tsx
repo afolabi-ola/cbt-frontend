@@ -146,6 +146,7 @@ import { useUserStore } from '@/store/useUserStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import Modal from '@/components/modal';
 
 interface SocketContextType {
   socket: Socket | null;
@@ -155,6 +156,10 @@ interface SocketContextType {
   emit: <T>(event: string, payload?: T) => void;
   on: (event: string, listener: (...args: unknown[]) => void) => void;
   off: (event: string, listener?: (...args: unknown[]) => void) => void;
+}
+
+interface ForceLogoutPayload {
+  reason?: string;
 }
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
@@ -167,6 +172,11 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const resetUser = useUserStore((state) => state.reset);
   const queryClient = useQueryClient();
   const router = useRouter();
+  const [forceLogoutState, setForceLogoutState] = useState<{
+    reason: string;
+    remainingSeconds: number;
+  } | null>(null);
+  const forceLogoutHandledRef = useRef(false);
 
   const connect = useCallback(() => {
     if (socketRef.current?.connected) return;
@@ -223,29 +233,69 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!socketInstance || !role) return;
 
-    const handleForceLogout = async () => {
-      try {
-        await fetch('/api/auth/logout', {
-          method: 'POST',
-          credentials: 'include',
-        });
-      } finally {
-        queryClient.clear();
-        resetUser();
-        disconnect();
-        toast.error('Your session was ended by an administrator.');
-        router.replace(
-          role === 'admin' || role === 'teacher' ? '/admin/login' : '/',
-        );
-      }
+    const handleForceLogout = (payload?: unknown) => {
+      if (forceLogoutHandledRef.current) return;
+
+      forceLogoutHandledRef.current = true;
+      const forceLogoutPayload = (payload ?? {}) as ForceLogoutPayload;
+      setForceLogoutState({
+        reason:
+          forceLogoutPayload.reason ||
+          'Your session was ended by an administrator.',
+        remainingSeconds: 5,
+      });
     };
 
-    socketInstance.on('force-logout', handleForceLogout);
+    const forceLogoutEvents = ['force-logout', 'force_logout', 'forceLogout'];
+    forceLogoutEvents.forEach((eventName) => {
+      socketInstance.on(eventName, handleForceLogout);
+    });
 
     return () => {
-      socketInstance.off('force-logout', handleForceLogout);
+      forceLogoutEvents.forEach((eventName) => {
+        socketInstance.off(eventName, handleForceLogout);
+      });
     };
-  }, [disconnect, queryClient, resetUser, role, router, socketInstance]);
+  }, [role, socketInstance]);
+
+  useEffect(() => {
+    if (!forceLogoutState) return;
+
+    if (forceLogoutState.remainingSeconds === 0) {
+      const completeForceLogout = async () => {
+        try {
+          await fetch('/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include',
+          });
+        } finally {
+          queryClient.clear();
+          resetUser();
+          disconnect();
+          toast.error(forceLogoutState.reason);
+          router.replace(
+            role === 'admin' || role === 'teacher' ? '/admin/login' : '/',
+          );
+        }
+      };
+
+      void completeForceLogout();
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setForceLogoutState((current) =>
+        current
+          ? {
+              ...current,
+              remainingSeconds: current.remainingSeconds - 1,
+            }
+          : null,
+      );
+    }, 1000);
+
+    return () => window.clearTimeout(timer);
+  }, [disconnect, forceLogoutState, queryClient, resetUser, role, router]);
 
   const emit: SocketContextType['emit'] = useCallback((event, payload) => {
     socketRef.current?.emit(event, payload);
@@ -263,19 +313,42 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <SocketContext.Provider
-      value={{
-        socket: socketInstance,
-        isConnected,
-        connect,
-        disconnect,
-        emit,
-        on,
-        off,
-      }}
-    >
-      {children}
-    </SocketContext.Provider>
+    <>
+      <SocketContext.Provider
+        value={{
+          socket: socketInstance,
+          isConnected,
+          connect,
+          disconnect,
+          emit,
+          on,
+          off,
+        }}
+      >
+        {children}
+      </SocketContext.Provider>
+
+      <Modal
+        modalIsOpen={Boolean(forceLogoutState)}
+        dismissible={false}
+        setModalIsOpen={() => undefined}
+      >
+        {forceLogoutState && (
+          <div className='space-y-4 text-center'>
+            <h2 className='text-xl font-semibold text-neutral-900'>
+              Session ended
+            </h2>
+            <p className='text-sm text-neutral-600'>
+              {forceLogoutState.reason}
+            </p>
+            <p className='text-sm font-medium text-error-700'>
+              Redirecting to login in {forceLogoutState.remainingSeconds} second
+              {forceLogoutState.remainingSeconds === 1 ? '' : 's'}...
+            </p>
+          </div>
+        )}
+      </Modal>
+    </>
   );
 }
 
