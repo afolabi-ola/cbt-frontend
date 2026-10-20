@@ -39,12 +39,18 @@ interface TestSession {
 
 interface TestResultStore {
   testResult: TestSession | null;
+  endReason: string | null;
   setTestResult: (r: TestSession | null) => void;
+  setEndReason: (reason: string | null) => void;
+  clearEndReason: () => void;
   clearTestResult: () => void;
 }
 
 export const useTestResultStore = create<TestResultStore>((set) => ({
   testResult: null,
+  endReason: null,
   setTestResult: (r) => set({ testResult: r }),
+  setEndReason: (reason) => set({ endReason: reason }),
+  clearEndReason: () => set({ endReason: null }),
   clearTestResult: () => set({ testResult: null }),
 }));

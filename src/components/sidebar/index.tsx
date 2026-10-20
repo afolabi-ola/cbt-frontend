@@ -30,7 +30,7 @@ const AdminSidebar = ({
   return (
     <>
       {/* desktop view */}
-      <section className='hidden md:block w-full max-w-70 max-h-screen sticky top-0 '>
+      <section className='hidden md:block w-[17.5rem] min-w-[17.5rem] shrink-0 max-h-screen sticky top-0'>
         <aside
           className='flex flex-col gap-12 w-full justify-between bg-primary-600 h-full p-4 overflow-y-auto  [&::-webkit-scrollbar]:w-2
      [&::-webkit-scrollbar-track]:bg-primary-600

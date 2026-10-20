@@ -60,7 +60,7 @@ export default function TestAttemptSidebar({
   return (
     <aside className='bg-white p-6  shadow-sm w-64'>
       <div className='flex flex-col items-center mb-6'>
-        <div className='w-20 h-20 overflow-hidden rounded-full bg-gray-100 flex items-center justify-center text-3xl'>
+        <div className='w-20 h-20 overflow-hidden rounded-sm bg-gray-100 flex items-center justify-center text-3xl'>
           {profilePicture ? (
             <Image
               src={profilePicture}

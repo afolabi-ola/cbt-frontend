@@ -152,3 +152,22 @@ export function useAdminSingleResult(sessionId?: number | null) {
 
   return queryResponse;
 }
+
+export function useEndAdminTestSession() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (sessionId: number) =>
+      resultsServices.endAdminTestSession(sessionId),
+    onSuccess: (data, sessionId) => {
+      queryClient.invalidateQueries({ queryKey: ['adminResult'] });
+      queryClient.invalidateQueries({
+        queryKey: ['adminSingleResult', sessionId],
+      });
+      toast.success(data?.message || 'Test session ended successfully');
+    },
+    onError: (error) => {
+      toast.error(getErrorDetails(error));
+    },
+  });
+}

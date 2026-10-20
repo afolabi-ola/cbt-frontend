@@ -147,6 +147,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import Modal from '@/components/modal';
+import { AUTH_SESSION_STORAGE_KEY } from '@/lib/constants';
 
 interface SocketContextType {
   socket: Socket | null;
@@ -169,6 +170,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const [isConnected, setIsConnected] = useState(false);
   const [socketInstance, setSocketInstance] = useState<Socket | null>(null);
   const role = useUserStore((state) => state.role);
+  const setRole = useUserStore((state) => state.setRole);
   const resetUser = useUserStore((state) => state.reset);
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -199,12 +201,34 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const existingSocket = getSocket();
+    if (role) return;
 
-    if (role && existingSocket) {
-      socketRef.current = existingSocket;
-      setSocketInstance(existingSocket);
-      setIsConnected(existingSocket.connected);
+    const storedSession = localStorage.getItem(AUTH_SESSION_STORAGE_KEY);
+    if (!storedSession) return;
+
+    try {
+      const parsedSession = JSON.parse(storedSession) as {
+        role?: 'admin' | 'teacher' | 'student';
+      };
+
+      if (
+        parsedSession.role === 'admin' ||
+        parsedSession.role === 'teacher' ||
+        parsedSession.role === 'student'
+      ) {
+        setRole(parsedSession.role);
+      }
+    } catch {
+      localStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
+    }
+  }, [role, setRole]);
+
+  useEffect(() => {
+    if (role) {
+      const currentSocket = getSocket() ?? initializeSocket();
+      socketRef.current = currentSocket;
+      setSocketInstance(currentSocket);
+      setIsConnected(currentSocket.connected);
     } else if (!role && socketRef.current) {
       disconnect();
     }
@@ -270,6 +294,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
           });
         } finally {
           queryClient.clear();
+          localStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
           resetUser();
           disconnect();
           toast.error(forceLogoutState.reason);

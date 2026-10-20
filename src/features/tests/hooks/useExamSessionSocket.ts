@@ -19,6 +19,7 @@ interface UseExamSessionSocketResult extends TimerState {
   leave: () => void;
   finish: () => void;
   isJoined: boolean;
+  timeUpReason: string | null;
   lastEventTs?: number;
 }
 
@@ -43,6 +44,7 @@ export function useExamSessionSocket(
     remainingSeconds: null,
   });
   const [lastEventTs, setLastEventTs] = useState<number | undefined>(undefined);
+  const [timeUpReason, setTimeUpReason] = useState<string | null>(null);
   const sessionIdRef = useRef(sessionId);
 
   // Keep ref synced
@@ -131,6 +133,7 @@ export function useExamSessionSocket(
       const p = payload as TimeUpPayload;
       if (p.sessionId !== sessionIdRef.current) return;
       setTimer((prev) => ({ ...prev, remainingSeconds: 0 }));
+      setTimeUpReason(p.reason ?? 'timeout');
       setIsJoined(false);
     };
 
@@ -163,6 +166,7 @@ export function useExamSessionSocket(
     leave,
     finish,
     isJoined,
+    timeUpReason,
     lastEventTs,
   };
 }

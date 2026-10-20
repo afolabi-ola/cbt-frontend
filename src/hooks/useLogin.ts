@@ -1,5 +1,6 @@
 import { authService } from '@/services/authService';
 import { initializeSocket } from '@/lib/socket';
+import { AUTH_SESSION_STORAGE_KEY } from '@/lib/constants';
 import { useUserStore } from '@/store/useUserStore';
 import { LoginPayload, LoginResponse } from '@/types/auth.types';
 import { AppError } from '@/types/errors.types';
@@ -26,6 +27,10 @@ export default function useLogin() {
       queryClient.invalidateQueries();
 
       const role = data.data.data.role;
+      localStorage.setItem(
+        AUTH_SESSION_STORAGE_KEY,
+        JSON.stringify({ role: role.toLowerCase() }),
+      );
       initializeSocket();
       setRole(role.toLowerCase() as 'admin' | 'teacher' | 'student');
 
@@ -44,3 +49,6 @@ export default function useLogin() {
 
   return { login, isLoginPending, isLoginError };
 }
+
+
+//login_session_connected payload username

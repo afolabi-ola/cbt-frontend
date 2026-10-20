@@ -22,7 +22,7 @@ interface RenderItemProps<T> {
 }
 
 const getSafeModalPosition = (rect: DOMRect) => {
-  const MODAL_HEIGHT = 160; // safe estimate
+  const MODAL_HEIGHT = 160;
   const MODAL_WIDTH = 200;
   const OFFSET = 4;
 
@@ -35,7 +35,7 @@ const getSafeModalPosition = (rect: DOMRect) => {
 
   // 🔼 If it overflows bottom, flip above
   if (top + MODAL_HEIGHT > viewportHeight) {
-    top = rect.top - MODAL_HEIGHT - -100;
+    top = rect.top - MODAL_HEIGHT - OFFSET;
   }
 
   // ⬅️ Clamp horizontally
@@ -102,9 +102,16 @@ interface AppTableProps<T> {
   onRowPress?: ({ item, itemIndex }: RenderItemProps<T>) => void;
 }
 
-export const TableDataItem = ({ children, ...rest }: TableDataItemProps) => {
+export const TableDataItem = ({
+  children,
+  className,
+  ...rest
+}: TableDataItemProps) => {
   return (
-    <td className='text-center text-sm' {...rest}>
+    <td
+      className={`min-w-[120px] whitespace-nowrap text-center text-sm ${className ?? ''}`}
+      {...rest}
+    >
       {children}
     </td>
   );
@@ -222,7 +229,10 @@ const AppTable = <T,>({
         <thead className='bg-primary-600'>
           <tr>
             {columns.map((item, itemIndex) => (
-              <th key={itemIndex} className='text-background py-2 text-sm'>
+              <th
+                key={itemIndex}
+                className='min-w-[120px] whitespace-nowrap px-4 py-2 text-background text-sm'
+              >
                 {item}
               </th>
             ))}
@@ -251,7 +261,7 @@ const AppTable = <T,>({
                 })}
 
                 {onActionClick && (
-                  <td className='text-center'>
+                  <td className='min-w-[80px] whitespace-nowrap px-4 text-center'>
                     <button
                       aria-label='actions'
                       className='px-2 py-1 rounded bg-primary-500 text-white text-xs cursor-pointer'
@@ -311,7 +321,7 @@ const AppTable = <T,>({
             onClick={() => setShowModal(false)}
           >
             <div
-              className='absolute bg-white p-1 rounded shadow-xl z-1000 mx-2'
+              className='absolute max-h-[150px] max-w-[calc(100vw-1rem)] overflow-y-auto rounded bg-white p-1 shadow-xl z-1000 mx-2'
               style={{
                 top: modalPosition.top,
                 left: modalPosition.left,
