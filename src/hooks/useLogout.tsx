@@ -2,6 +2,7 @@
 
 import { authService } from '@/services/authService';
 import { useSocket } from '@/context/SocketContext';
+import { AUTH_SESSION_STORAGE_KEY } from '@/lib/constants';
 import { useUserStore } from '@/store/useUserStore';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -21,6 +22,7 @@ export default function useLogout() {
     onSuccess: (data) => {
       toast.success(data.message);
       queryClient.invalidateQueries();
+      localStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
       disconnect();
       resetUser();
       replace('/');

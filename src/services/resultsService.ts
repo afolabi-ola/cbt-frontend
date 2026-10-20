@@ -129,4 +129,8 @@ export const resultsServices = {
     const response = await api.get(`results/session/${sessionId}`);
     return response.data as AdminSingleResultResponse;
   },
+  endAdminTestSession: async (sessionId: number) => {
+    const response = await api.post(`/sessions/admin/${sessionId}/finish`);
+    return response.data;
+  },
 };

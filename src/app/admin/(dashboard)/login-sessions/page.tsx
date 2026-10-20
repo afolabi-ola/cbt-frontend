@@ -11,10 +11,11 @@ import ResultsFiltersBar, {
 import { authService } from '@/services/authService';
 import type { LoginSession, LoginSessionsResponse } from '@/types/auth.types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FiEye, FiLogOut, FiRefreshCw, FiX } from 'react-icons/fi';
 import { useServerPagination } from '@/hooks/useServerPagination';
+import { useSocket } from '@/context/SocketContext';
 
 const filterFields: ResultFilterField[] = [
   {
@@ -29,6 +30,10 @@ type LogoutConfirmation =
   | { type: 'single'; session: LoginSession }
   | { type: 'all' }
   | null;
+
+interface LoginSessionConnectedPayload {
+  username?: string;
+}
 
 const formatDate = (value: string) =>
   new Intl.DateTimeFormat('en', {
@@ -48,6 +53,7 @@ const getErrorMessage = (error: unknown) => {
 
 export default function LoginSessionsPage() {
   const queryClient = useQueryClient();
+  const { socket } = useSocket();
   const { params, goToPage, updateParams, setLimit } = useServerPagination({
     defaultPage: 1,
     defaultLimit: 10,
@@ -57,6 +63,11 @@ export default function LoginSessionsPage() {
   );
   const [logoutConfirmation, setLogoutConfirmation] =
     useState<LogoutConfirmation>(null);
+  const [connectedUsername, setConnectedUsername] = useState<string | null>(
+    null,
+  );
+  const refreshTimeoutRef = useRef<number | null>(null);
+  const notificationTimeoutRef = useRef<number | null>(null);
 
   const page = (params.page as number | undefined) ?? 1;
   const limit = (params.limit as number | undefined) ?? 10;
@@ -67,6 +78,43 @@ export default function LoginSessionsPage() {
     queryKey: ['login-sessions', sessionParams],
     queryFn: () => authService.getLoginSessions(sessionParams),
   });
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleLoginSessionConnected = (payload: unknown) => {
+      const data = payload as LoginSessionConnectedPayload;
+      const username = data.username || 'A user';
+
+      setConnectedUsername(username);
+
+      if (notificationTimeoutRef.current) {
+        window.clearTimeout(notificationTimeoutRef.current);
+      }
+      notificationTimeoutRef.current = window.setTimeout(() => {
+        setConnectedUsername(null);
+      }, 4000);
+
+      if (refreshTimeoutRef.current) {
+        window.clearTimeout(refreshTimeoutRef.current);
+      }
+      refreshTimeoutRef.current = window.setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['login-sessions'] });
+      }, 350);
+    };
+
+    socket.on('login_session_connected', handleLoginSessionConnected);
+
+    return () => {
+      socket.off('login_session_connected', handleLoginSessionConnected);
+      if (refreshTimeoutRef.current) {
+        window.clearTimeout(refreshTimeoutRef.current);
+      }
+      if (notificationTimeoutRef.current) {
+        window.clearTimeout(notificationTimeoutRef.current);
+      }
+    };
+  }, [queryClient, socket]);
 
   const logoutMutation = useMutation({
     mutationFn: authService.logoutLoginSession,
@@ -120,7 +168,22 @@ export default function LoginSessionsPage() {
   };
 
   return (
-    <div className='w-full space-y-6'>
+    <div className='relative w-full space-y-6'>
+      <div
+        aria-live='polite'
+        className={`pointer-events-none fixed right-6 top-6 z-50 w-[min(22rem,calc(100vw-3rem))] rounded-lg border border-success-200 bg-white p-4 shadow-lg transition-all duration-500 ease-out ${
+          connectedUsername
+            ? 'translate-y-0 opacity-100'
+            : '-translate-y-6 opacity-0'
+        }`}
+      >
+        <p className='text-xs font-semibold uppercase tracking-wider text-success-700'>
+          Login session connected
+        </p>
+        <p className='mt-1 text-sm text-neutral-700'>
+          {connectedUsername} is now active.
+        </p>
+      </div>
       <div className='flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between'>
         <div className='w-full max-w-2xl space-y-1'>
           <p className='text-sm font-medium uppercase tracking-wider text-primary-600'>

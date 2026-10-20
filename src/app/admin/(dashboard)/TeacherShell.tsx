@@ -113,7 +113,7 @@ export default function TeacherShell({
           <SpinnerMini color='#0c4a6e' />
         </div>
       ) : (
-        <section className='relative flex-1 flex flex-col gap-4 w-full'>
+        <section className='relative flex min-w-0 flex-1 flex-col gap-4 w-full'>
           <AdminTopBar setIsOpen={setIsOpen} role={role} />
 
           {showDashboardError && (
@@ -123,7 +123,7 @@ export default function TeacherShell({
             </div>
           )}
 
-          <div className='flex-1 w-full p-4'>{children}</div>
+          <div className='min-w-0 flex-1 w-full p-4'>{children}</div>
 
           <Footer />
         </section>

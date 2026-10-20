@@ -100,25 +100,33 @@ export default function StudentAnswersViewer({
           </div>
 
           <div className='bg-linear-to-br from-primary-50 to-primary-100 rounded-xl p-6 text-center min-w-[200px]'>
-            <p className='text-sm text-gray-600 mb-1'>Score</p>
-            <p className='text-4xl font-bold text-primary-700'>
-              {session.score}/{totalMarks}
-            </p>
-            <p className='text-sm text-primary-600 font-semibold mt-2'>
-              {percentage}%
-            </p>
-            <div className='mt-3 pt-3 border-t border-primary-200'>
-              <p
-                className={`text-sm font-medium ${
-                  passed ? 'text-green-600' : 'text-red-600'
-                }`}
-              >
-                {passed ? '✓ PASSED' : '✗ FAILED'}
+            {session.score !== null && !isNaN(session.score) ? (
+              <>
+                <p className='text-sm text-gray-600 mb-1'>Score</p>
+                <p className='text-4xl font-bold text-primary-700'>
+                  {session.score}/{totalMarks}
+                </p>
+                <p className='text-sm text-primary-600 font-semibold mt-2'>
+                  {percentage}%
+                </p>
+                <div className='mt-3 pt-3 border-t border-primary-200'>
+                  <p
+                    className={`text-sm font-medium ${
+                      passed ? 'text-green-600' : 'text-red-600'
+                    }`}
+                  >
+                    {passed ? '✓ PASSED' : '✗ FAILED'}
+                  </p>
+                  <p className='text-xs text-gray-600 mt-1'>
+                    Pass mark: {passMark}
+                  </p>
+                </div>
+              </>
+            ) : (
+              <p className='text-4xl font-bold text-primary-700'>
+                {session.score}
               </p>
-              <p className='text-xs text-gray-600 mt-1'>
-                Pass mark: {passMark}
-              </p>
-            </div>
+            )}
           </div>
         </div>
 
@@ -132,16 +140,26 @@ export default function StudentAnswersViewer({
           </div>
           <div>
             <p className='text-sm text-gray-600 mb-1'>Completed</p>
-            <p className='font-medium text-gray-900'>
-              {new Date(session.endedAt).toLocaleString()}
-            </p>
+            {session.endedAt === null ? (
+              <p>IN_Progress</p>
+            ) : (
+              <>
+                <p className='font-medium text-gray-900'>
+                  {new Date(session.endedAt).toLocaleString()}
+                </p>
+              </>
+            )}
           </div>
           <div>
             <p className='text-sm text-gray-600 mb-1'>Duration</p>
-            <p className='font-medium text-gray-900'>
-              {`${totalMinutesElapsed} ${totalMinutesElapsed <= 1 ? 'minute' : 'minutes'}`}{' '}
-              {`${totalSecondsElapsed} ${totalSecondsElapsed <= 1 ? 'second' : 'seconds'}`}
-            </p>
+            {session.endedAt === null ? (
+              <p>IN_Progress</p>
+            ) : (
+              <p className='font-medium text-gray-900'>
+                {`${totalMinutesElapsed} ${totalMinutesElapsed <= 1 ? 'minute' : 'minutes'}`}{' '}
+                {`${totalSecondsElapsed} ${totalSecondsElapsed <= 1 ? 'second' : 'seconds'}`}
+              </p>
+            )}
           </div>
         </div>
       </div>

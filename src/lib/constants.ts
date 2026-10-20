@@ -16,6 +16,7 @@ export type ProgressStatus = 'not-started' | 'in-progress' | 'completed';
 export type TestType = 'TEST' | 'EXAM' | 'PRACTICE';
 
 export const STUDENT_PROFILE_PICTURE_STORAGE_KEY = 'studentProfilePicture';
+export const AUTH_SESSION_STORAGE_KEY = 'CBTAUTHSESSION';
 
 export const TEST_TYPE = {
 	TEST: 'TEST' as TestType,

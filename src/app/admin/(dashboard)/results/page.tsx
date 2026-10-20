@@ -10,7 +10,10 @@ import { useAdminStudents } from '@/features/students/hooks/useStudents';
 import type { AllCourses } from '@/types/dashboard.types';
 import AppTable, { TableDataItem } from '@/components/table';
 import Modal from '@/components/modal';
-import { useAdminSingleResult } from '@/hooks/useResultCourses';
+import {
+  useAdminSingleResult,
+  useEndAdminTestSession,
+} from '@/hooks/useResultCourses';
 import { Button } from '@/components/ui';
 import { useServerPagination } from '@/hooks/useServerPagination';
 import ResultsFiltersBar, {
@@ -57,6 +60,7 @@ export default function AdminResultPage() {
     number | null
   >(null);
   const singleResultQuery = useAdminSingleResult(selectedTestSessionId);
+  const endSessionMutation = useEndAdminTestSession();
 
   const handleFilterChange = useCallback(
     (nextParams: Record<string, string | number | undefined>) => {
@@ -393,7 +397,7 @@ export default function AdminResultPage() {
           <div className='flex justify-between items-center mb-6'>
             <h2 className='text-xl font-semibold'>Result Details</h2>
             <button
-              className='text-sm text-neutral-500 hover:text-neutral-700'
+              className='text-sm text-neutral-500 hover:text-neutral-700 cursor-pointer'
               onClick={() => setModalOpen(false)}
             >
               Close
@@ -414,6 +418,8 @@ export default function AdminResultPage() {
               const s = payload.session;
               const st = payload.student;
               const t = payload.test;
+              const isActiveSession =
+                s?.status?.toUpperCase() === 'IN_PROGRESS';
 
               return (
                 <>
@@ -488,6 +494,27 @@ export default function AdminResultPage() {
                       </div>
                     </div>
                   </div>
+                  {isActiveSession && (
+                    <div className='mt-6 flex justify-end'>
+                      <Button
+                        variant='danger'
+                        disabled={endSessionMutation.isPending}
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              "End this test session and calculate the user's score?",
+                            )
+                          ) {
+                            endSessionMutation.mutate(s.id);
+                          }
+                        }}
+                      >
+                        {endSessionMutation.isPending
+                          ? 'Ending Session...'
+                          : 'End Session'}
+                      </Button>
+                    </div>
+                  )}
                   {
                     // If we have detailed answers, show the StudentAnswersViewer component
                     hasAnswers && payload.questionsAnswers && (

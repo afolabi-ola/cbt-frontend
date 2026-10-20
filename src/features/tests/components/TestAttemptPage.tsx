@@ -18,6 +18,7 @@ import { LuX } from 'react-icons/lu';
 import Image from 'next/image';
 import { useSubmitAnswer } from '../hooks/useSubmitAnswer';
 import { STUDENT_PROFILE_PICTURE_STORAGE_KEY } from '@/lib/constants';
+import { useTestResultStore } from '@/store/useTestResultStore';
 
 export default function TestAttemptPage() {
   const searchParams = useSearchParams();
@@ -32,6 +33,7 @@ export default function TestAttemptPage() {
   const answers = useTestAttemptStore((s) => s.answers);
   const showSubmitButton = useTestAttemptStore((s) => s.showSubmitButton);
   const updateAnswer = useTestAttemptStore((s) => s.updateAnswer);
+  const setEndReason = useTestResultStore((s) => s.setEndReason);
 
   const { mutate: startTest, isPending: isStartingTest } =
     useStartTestSession();
@@ -67,7 +69,7 @@ export default function TestAttemptPage() {
     sessionId as string,
   );
   // Initialize socket AFTER submitTest is defined
-  const { remainingSeconds } = useExamSessionSocket(
+  const { remainingSeconds, timeUpReason } = useExamSessionSocket(
     sessionId ? Number(sessionId) : null,
     { autoConnect: true, autoJoin: true },
   );
@@ -76,6 +78,10 @@ export default function TestAttemptPage() {
   useEffect(() => {
     setRemainingSecondsState(remainingSeconds);
   }, [remainingSeconds]);
+
+  useEffect(() => {
+    if (timeUpReason) setEndReason(timeUpReason);
+  }, [setEndReason, timeUpReason]);
 
   useEffect(() => {
     if (remainingSecondsState === 0 && !hasAutoSubmittedRef.current) {
