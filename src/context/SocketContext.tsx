@@ -179,6 +179,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     remainingSeconds: number;
   } | null>(null);
   const forceLogoutHandledRef = useRef(false);
+  const forceLogoutCompletedRef = useRef(false);
 
   const connect = useCallback(() => {
     if (socketRef.current?.connected) return;
@@ -261,6 +262,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       if (forceLogoutHandledRef.current) return;
 
       forceLogoutHandledRef.current = true;
+      forceLogoutCompletedRef.current = false;
       const forceLogoutPayload = (payload ?? {}) as ForceLogoutPayload;
       setForceLogoutState({
         reason:
@@ -286,6 +288,9 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     if (!forceLogoutState) return;
 
     if (forceLogoutState.remainingSeconds === 0) {
+      if (forceLogoutCompletedRef.current) return;
+      forceLogoutCompletedRef.current = true;
+
       const completeForceLogout = async () => {
         try {
           await fetch('/api/auth/logout', {
@@ -297,7 +302,9 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
           localStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
           resetUser();
           disconnect();
-          toast.error(forceLogoutState.reason);
+          toast.error(forceLogoutState.reason, {
+            id: 'force-logout-notification',
+          });
           router.replace(
             role === 'admin' || role === 'teacher' ? '/admin/login' : '/',
           );

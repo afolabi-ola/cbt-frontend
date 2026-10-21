@@ -736,8 +736,8 @@ const AdminClasses = () => {
         {modalState.type === 'view' ? (
           <div className='grid grid-cols-4 gap-4'>
             {(modalState.modalContent?.courses ?? []).length > 0 ? (
-              (modalState.modalContent?.courses ?? []).map((c) => (
-                <Badge key={c?.id ?? Math.random()}>
+              (modalState.modalContent?.courses ?? []).map((c, index) => (
+                <Badge key={c?.id ?? `course-${index}`}>
                   <span className='block text-center'>
                     <span className='block font-black'>
                       {c?.title ?? 'N/A'}
