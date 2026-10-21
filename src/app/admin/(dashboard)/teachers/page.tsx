@@ -6,7 +6,7 @@ import Input from "@/components/ui/input";
 import Button from "@/components/ui/Button";
 import Modal from '@/components/modal';
 import { FaEyeSlash, FaEye } from "react-icons/fa";
-import { FiEdit3, FiKey, FiTrash2, FiUser } from 'react-icons/fi';
+import { FiUser } from 'react-icons/fi';
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -371,15 +371,14 @@ export default function AdminTeachersPage() {
               updateModalState({ key: 'modalContent', value: item })
             }
             actionModalContent={
-              <div className='flex w-full flex-col gap-2 rounded-xl border border-neutral-200 bg-white p-2 shadow-sm'>
+              <div className='flex flex-col gap-2 w-full'>
                 <button
                   onClick={() => {
                     updateModalState({ key: 'type', value: 'updateProfile' });
                     updateModalState({ key: 'isOpen', value: true });
                   }}
-                  className='flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-neutral-700 transition hover:bg-primary-50 hover:text-primary-700'
+                  className='px-2 py-1 rounded bg-primary-500 text-white text-xs cursor-pointer'
                 >
-                  <FiEdit3 />
                   Update Profile
                 </button>
                 <button
@@ -387,9 +386,8 @@ export default function AdminTeachersPage() {
                     updateModalState({ key: 'type', value: 'update' });
                     updateModalState({ key: 'isOpen', value: true });
                   }}
-                  className='flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-neutral-700 transition hover:bg-primary-50 hover:text-primary-700'
+                  className='px-2 py-1 rounded bg-primary-500 text-white text-xs cursor-pointer'
                 >
-                  <FiKey />
                   Update Password
                 </button>
                 <button
@@ -397,9 +395,8 @@ export default function AdminTeachersPage() {
                     updateModalState({ key: 'type', value: 'delete' });
                     updateModalState({ key: 'isOpen', value: true });
                   }}
-                  className='flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-error-700 transition hover:bg-error-50'
+                  className='px-2 py-1 rounded bg-error-500 text-white text-xs cursor-pointer'
                 >
-                  <FiTrash2 />
                   Delete Teacher
                 </button>
               </div>

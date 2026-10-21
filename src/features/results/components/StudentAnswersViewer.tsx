@@ -99,7 +99,7 @@ export default function StudentAnswersViewer({
             <p className='text-sm text-gray-500 mt-2'>{course.title}</p>
           </div>
 
-          <div className='bg-linear-to-br from-primary-50 to-primary-100 rounded-xl p-6 text-center min-w-[200px]'>
+          <div className='bg-linear-to-br from-primary-50 to-primary-100 rounded-xl p-6 text-center min-w-[200px] w-full md:w-auto'>
             {session.score !== null && !isNaN(session.score) ? (
               <>
                 <p className='text-sm text-gray-600 mb-1'>Score</p>
@@ -123,7 +123,7 @@ export default function StudentAnswersViewer({
                 </div>
               </>
             ) : (
-              <p className='text-4xl font-bold text-primary-700'>
+              <p className='text-2xl font-bold text-primary-700'>
                 {session.score}
               </p>
             )}
@@ -141,7 +141,7 @@ export default function StudentAnswersViewer({
           <div>
             <p className='text-sm text-gray-600 mb-1'>Completed</p>
             {session.endedAt === null ? (
-              <p>IN_Progress</p>
+              <p className='uppercase'>IN_Progress</p>
             ) : (
               <>
                 <p className='font-medium text-gray-900'>
@@ -153,7 +153,7 @@ export default function StudentAnswersViewer({
           <div>
             <p className='text-sm text-gray-600 mb-1'>Duration</p>
             {session.endedAt === null ? (
-              <p>IN_Progress</p>
+              <p className='uppercase'>IN_Progress</p>
             ) : (
               <p className='font-medium text-gray-900'>
                 {`${totalMinutesElapsed} ${totalMinutesElapsed <= 1 ? 'minute' : 'minutes'}`}{' '}

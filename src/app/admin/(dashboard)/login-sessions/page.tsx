@@ -171,7 +171,7 @@ export default function LoginSessionsPage() {
     <div className='relative w-full space-y-6'>
       <div
         aria-live='polite'
-        className={`pointer-events-none fixed right-6 top-6 z-50 w-[min(22rem,calc(100vw-3rem))] rounded-lg border border-success-200 bg-white p-4 shadow-lg transition-all duration-500 ease-out ${
+        className={`pointer-events-none fixed right-6 top-6 z-50 w-[min(22rem,calc(100vw-3rem))] rounded-lg border border-success-500 bg-white p-4 shadow-lg transition-all duration-500 ease-out ${
           connectedUsername
             ? 'translate-y-0 opacity-100'
             : '-translate-y-6 opacity-0'

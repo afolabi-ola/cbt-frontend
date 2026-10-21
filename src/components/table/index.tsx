@@ -321,7 +321,7 @@ const AppTable = <T,>({
             onClick={() => setShowModal(false)}
           >
             <div
-              className='absolute max-h-[150px] max-w-[calc(100vw-1rem)] overflow-y-auto rounded bg-white p-1 shadow-xl z-1000 mx-2'
+              className='absolute max-w-[calc(100vw-1rem)] overflow-y-auto rounded bg-white p-1 shadow-xl z-1000 mx-2'
               style={{
                 top: modalPosition.top,
                 left: modalPosition.left,
