@@ -1,5 +1,22 @@
 # CBT Frontend
 
+> ## About this repository
+> **My role:** Sole frontend developer on this project (freelance). I built the
+> entire frontend myself, including the student, admin, and teacher portals, the
+> timed exam-attempt flow with Socket.IO session events, role-based route
+> protection, and the dashboards.
+>
+> **Why this is a fork:** The original codebase lives in a client-owned
+> repository, so this is my personal copy, kept for portfolio purposes. I
+> adapted it for public demo use: it's rehosted on my own infrastructure, connected to
+> my own database and API, seeded with demo data that resets daily, and contains
+> no client branding or credentials.
+> 
+> **Demo logins:** available from the "Demo Access" button on my portfolio.
+
+The CBT Frontend is a Next.js 16 application for a computer-based testing
+platform...
+
 The CBT Frontend is a Next.js 16 application for a computer-based testing
 platform. It provides separate experiences for students, administrators, and
 teachers:
